@@ -1,0 +1,194 @@
+{
+  "schema_version": "1.1",
+  "vendor_code": "ICON_CRO",
+  "upload_timestamp": "2025-01-15T09:30:00Z",
+  "upload_type": "FULL",
+  "contact_email": "ctsr-support@iconplc.com",
+  "system_instances": [
+    {
+      "instance_code": "ICON-RAVE-PROD-001",
+      "platform_vendor_code": "MEDIDATA",
+      "platform_name": "Medidata Rave EDC",
+      "platform_version": "2024.2.1",
+      "instance_name": "ICON Managed Rave Production - Enterprise",
+      "instance_environment": "PRODUCTION",
+      "system_category": "EDC",
+      "validation_status": "VALIDATED",
+      "validation_date": "2024-11-15",
+      "validation_expiry": "2025-11-15",
+      "validation_evidence_link": "https://vault.iconplc.com/docs/VAL-2024-RAVE-001",
+      "hosting_model": "SAAS",
+      "data_hosting_region": "EU",
+      "description": "Primary EDC platform for Novo Nordisk trials managed by ICON. Multi-tenant SaaS with dedicated study environments. Hosted in AWS Frankfurt (eu-central-1).",
+      "supported_studies": [
+        "NN1250-1839",
+        "NN4523-2156",
+        "NN7891-3042"
+      ],
+      "interfaces": [
+        {
+          "system_name": "Suvoda IRT",
+          "direction": "BIDIRECTIONAL",
+          "data_type": "Randomization data, treatment assignments"
+        },
+        {
+          "system_name": "LabCorp Central Lab",
+          "direction": "INBOUND",
+          "data_type": "Lab results, reference ranges"
+        },
+        {
+          "system_name": "Argus Safety",
+          "direction": "OUTBOUND",
+          "data_type": "SAE data, adverse events"
+        }
+      ],
+      "last_major_change": {
+        "date": "2024-11-01",
+        "description": "Upgraded from 2024.1.x to 2024.2.1 - includes new edit check engine"
+      },
+      "next_planned_change": {
+        "date": "2025-05-01",
+        "description": "Planned upgrade to 2025.1.x with enhanced audit trail"
+      },
+      "part11_compliant": true,
+      "annex11_compliant": true,
+      "soc2_certified": true,
+      "iso27001_certified": true,
+      "is_active": true
+    },
+    {
+      "instance_code": "ICON-SUVODA-PROD-001",
+      "platform_vendor_code": "SUVODA",
+      "platform_name": "Suvoda IRT",
+      "platform_version": "8.7.0",
+      "instance_name": "ICON Managed Suvoda IRT Production",
+      "instance_environment": "PRODUCTION",
+      "system_category": "IRT",
+      "validation_status": "VALIDATED",
+      "validation_date": "2024-09-20",
+      "validation_expiry": "2025-09-20",
+      "validation_evidence_link": "https://vault.iconplc.com/docs/VAL-2024-SUVODA-001",
+      "hosting_model": "SAAS",
+      "data_hosting_region": "EU",
+      "description": "Randomization and trial supply management system. Handles blinded and unblinded randomization, drug supply forecasting, and depot management.",
+      "supported_studies": [
+        "NN1250-1839",
+        "NN4523-2156"
+      ],
+      "interfaces": [
+        {
+          "system_name": "Medidata Rave EDC",
+          "direction": "BIDIRECTIONAL",
+          "data_type": "Subject eligibility, randomization confirmation"
+        },
+        {
+          "system_name": "Drug Depot System",
+          "direction": "OUTBOUND",
+          "data_type": "Shipment requests, inventory levels"
+        }
+      ],
+      "last_major_change": {
+        "date": "2024-08-15",
+        "description": "Version upgrade from 8.5.x to 8.7.0"
+      },
+      "part11_compliant": true,
+      "annex11_compliant": true,
+      "soc2_certified": true,
+      "iso27001_certified": true,
+      "is_active": true
+    },
+    {
+      "instance_code": "ICON-CLARIO-ECOA-001",
+      "platform_vendor_code": "CLARIO",
+      "platform_name": "Clario eCOA",
+      "platform_version": "12.5.2",
+      "instance_name": "Patient ePRO Platform",
+      "instance_environment": "PRODUCTION",
+      "system_category": "eCOA",
+      "validation_status": "VALIDATED",
+      "validation_date": "2024-10-10",
+      "validation_expiry": "2025-10-10",
+      "validation_evidence_link": "https://vault.iconplc.com/docs/VAL-2024-CLARIO-001",
+      "hosting_model": "SAAS",
+      "data_hosting_region": "EU",
+      "description": "Electronic patient-reported outcomes collection via provisioned devices and BYOD app. Supports multiple languages and accessibility features.",
+      "supported_studies": [
+        "NN1250-1839"
+      ],
+      "interfaces": [
+        {
+          "system_name": "Medidata Rave EDC",
+          "direction": "OUTBOUND",
+          "data_type": "ePRO scores, compliance data"
+        }
+      ],
+      "part11_compliant": true,
+      "annex11_compliant": true,
+      "soc2_certified": true,
+      "iso27001_certified": false,
+      "is_active": true
+    },
+    {
+      "instance_code": "ICON-VEEVA-ETMF-001",
+      "platform_vendor_code": "VEEVA",
+      "platform_name": "Veeva Vault eTMF",
+      "platform_version": "24R1",
+      "instance_name": "ICON eTMF Instance",
+      "instance_environment": "PRODUCTION",
+      "system_category": "TMF",
+      "validation_status": "VALIDATED",
+      "validation_date": "2024-03-15",
+      "validation_expiry": "2025-03-15",
+      "validation_evidence_link": "https://vault.iconplc.com/docs/VAL-2024-VEEVA-TMF-001",
+      "hosting_model": "SAAS",
+      "data_hosting_region": "EU",
+      "description": "Electronic Trial Master File for document management and regulatory inspection readiness.",
+      "supported_studies": [
+        "NN1250-1839",
+        "NN4523-2156",
+        "NN7891-3042",
+        "NN8234-4521"
+      ],
+      "interfaces": [
+        {
+          "system_name": "Medidata Rave EDC",
+          "direction": "INBOUND",
+          "data_type": "CRF snapshots, audit trails"
+        },
+        {
+          "system_name": "CTMS",
+          "direction": "BIDIRECTIONAL",
+          "data_type": "Site documents, milestone data"
+        }
+      ],
+      "part11_compliant": true,
+      "annex11_compliant": true,
+      "soc2_certified": true,
+      "iso27001_certified": true,
+      "is_active": true
+    },
+    {
+      "instance_code": "ICON-LEGACY-EDC-002",
+      "platform_vendor_code": "MEDIDATA",
+      "platform_name": "Medidata Rave EDC",
+      "platform_version": "2022.4.3",
+      "instance_name": "Legacy Rave Instance (Sunset)",
+      "instance_environment": "PRODUCTION",
+      "system_category": "EDC",
+      "validation_status": "DECOMMISSIONED",
+      "validation_date": "2022-06-15",
+      "hosting_model": "SAAS",
+      "data_hosting_region": "US",
+      "description": "Legacy EDC instance - decommissioned December 2024. Data archived.",
+      "supported_studies": [],
+      "interfaces": [],
+      "last_major_change": {
+        "date": "2024-12-01",
+        "description": "System decommissioned, data archived to long-term storage"
+      },
+      "part11_compliant": true,
+      "annex11_compliant": true,
+      "is_active": false
+    }
+  ]
+}

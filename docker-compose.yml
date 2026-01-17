@@ -1,0 +1,26 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: ctsr-postgres
+    environment:
+      POSTGRES_DB: ctsr
+      POSTGRES_USER: ctsr_user
+      POSTGRES_PASSWORD: ctsr_dev_password
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./ctsr-package/database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ctsr_user -d ctsr"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local

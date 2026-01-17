@@ -1,0 +1,265 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://novonordisk.com/ctsr/vendor-upload/v1.1",
+  "title": "CTSR Vendor System Upload Schema",
+  "description": "JSON Schema for vendor/CRO system instance data uploads to the Clinical Trial Systems Register. Version 1.1 adds data hosting region, supported studies, structured interfaces, and validation evidence links.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "vendor_code",
+    "upload_timestamp",
+    "system_instances"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.1",
+      "description": "Schema version for compatibility checking"
+    },
+    "vendor_code": {
+      "type": "string",
+      "pattern": "^[A-Z0-9_]{2,20}$",
+      "description": "Unique vendor identifier assigned by Novo Nordisk (e.g., ICON_CRO, IQVIA_LABS)"
+    },
+    "upload_timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of upload generation (e.g., 2024-12-08T14:30:00Z)"
+    },
+    "upload_type": {
+      "type": "string",
+      "enum": ["FULL", "INCREMENTAL"],
+      "default": "FULL",
+      "description": "FULL replaces all instances for this vendor, INCREMENTAL updates only included instances"
+    },
+    "contact_email": {
+      "type": "string",
+      "format": "email",
+      "description": "Contact email for queries about this upload"
+    },
+    "system_instances": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/system_instance"
+      },
+      "minItems": 1,
+      "description": "Array of system instances managed by this vendor"
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "system_instance": {
+      "type": "object",
+      "required": [
+        "instance_code",
+        "platform_name",
+        "platform_version",
+        "system_category",
+        "validation_status",
+        "hosting_model",
+        "data_hosting_region"
+      ],
+      "properties": {
+        "instance_code": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]{5,50}$",
+          "description": "Unique identifier for this instance (vendor-assigned). Allows mixed case, numbers, underscores, and hyphens."
+        },
+        "platform_vendor_code": {
+          "type": "string",
+          "pattern": "^[A-Z0-9_]{2,20}$",
+          "description": "Platform vendor code if different from uploading vendor (e.g., MEDIDATA, VEEVA)"
+        },
+        "platform_name": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Name of the platform/product (e.g., Medidata Rave EDC)"
+        },
+        "platform_version": {
+          "type": "string",
+          "maxLength": 50,
+          "description": "Current version number (e.g., 2024.1.3)"
+        },
+        "instance_name": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Descriptive name for this instance (e.g., ICON Managed Rave Production)"
+        },
+        "instance_environment": {
+          "type": "string",
+          "enum": ["PRODUCTION", "VALIDATION", "UAT", "DEV"],
+          "default": "PRODUCTION",
+          "description": "Environment type - typically PRODUCTION for trial use"
+        },
+        "system_category": {
+          "type": "string",
+          "enum": [
+            "EDC",
+            "eCOA",
+            "eDIARY",
+            "eSOURCE",
+            "IRT",
+            "CTMS",
+            "TMF",
+            "SITE",
+            "SAFETY",
+            "SAE_REPORT",
+            "LAB",
+            "BIOBANK",
+            "ECG",
+            "IMG",
+            "PK",
+            "CODING",
+            "STAT",
+            "SUB",
+            "TELE",
+            "eCONSENT",
+            "DHT",
+            "RPM",
+            "DTP",
+            "IDMC",
+            "ADJUD",
+            "TRAIN",
+            "ARCHIVE",
+            "INTEG",
+            "OTHER"
+          ],
+          "description": "System category code per CTSR taxonomy"
+        },
+        "validation_status": {
+          "type": "string",
+          "enum": [
+            "VALIDATED",
+            "VAL_PLANNED",
+            "VAL_IN_PROGRESS",
+            "VAL_EXPIRED",
+            "NOT_VALIDATED",
+            "DECOMMISSIONED"
+          ],
+          "description": "Current validation status of the system instance"
+        },
+        "validation_date": {
+          "type": "string",
+          "format": "date",
+          "description": "Date of most recent validation (YYYY-MM-DD)"
+        },
+        "validation_expiry": {
+          "type": "string",
+          "format": "date",
+          "description": "Date when validation expires and re-assessment is due (YYYY-MM-DD)"
+        },
+        "validation_evidence_link": {
+          "type": "string",
+          "format": "uri",
+          "description": "Link to Validation Summary Report or Certificate in Vendor/Sponsor DMS"
+        },
+        "hosting_model": {
+          "type": "string",
+          "enum": ["SAAS", "SAAS_ST", "PAAS", "IAAS", "ON_PREM", "HYBRID"],
+          "description": "Hosting/deployment model. SAAS_ST = SaaS Single Tenant"
+        },
+        "data_hosting_region": {
+          "type": "string",
+          "enum": ["EU", "US", "CHINA", "APAC_OTHER", "UK", "GLOBAL_DISTRIBUTED"],
+          "description": "Primary physical location of data storage (Critical for GDPR/Schrems II compliance)"
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 1000,
+          "description": "Free-text description of the system instance and its purpose"
+        },
+        "supported_studies": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Z0-9\\-]{3,20}$"
+          },
+          "description": "List of Sponsor Protocol IDs (e.g., NN1234-5678) active on this instance. Critical for impact analysis. Validated against CTMS."
+        },
+        "interfaces": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/interface"
+          },
+          "description": "Structured details on system integrations and data flows"
+        },
+        "last_major_change": {
+          "type": "object",
+          "properties": {
+            "date": {
+              "type": "string",
+              "format": "date",
+              "description": "Date of the last major change (YYYY-MM-DD)"
+            },
+            "description": {
+              "type": "string",
+              "maxLength": 500,
+              "description": "Description of the change"
+            }
+          },
+          "description": "Information about the most recent major change/upgrade"
+        },
+        "next_planned_change": {
+          "type": "object",
+          "properties": {
+            "date": {
+              "type": "string",
+              "format": "date",
+              "description": "Planned date of next major change (YYYY-MM-DD)"
+            },
+            "description": {
+              "type": "string",
+              "maxLength": 500,
+              "description": "Description of planned change"
+            }
+          },
+          "description": "Information about planned upcoming changes"
+        },
+        "part11_compliant": {
+          "type": "boolean",
+          "description": "Whether the system is 21 CFR Part 11 compliant"
+        },
+        "annex11_compliant": {
+          "type": "boolean",
+          "description": "Whether the system is EU Annex 11 compliant"
+        },
+        "soc2_certified": {
+          "type": "boolean",
+          "description": "Whether the system/vendor has SOC 2 certification"
+        },
+        "iso27001_certified": {
+          "type": "boolean",
+          "description": "Whether the system/vendor has ISO 27001 certification"
+        },
+        "is_active": {
+          "type": "boolean",
+          "default": true,
+          "description": "Set to false to mark instance as decommissioned"
+        }
+      },
+      "additionalProperties": false
+    },
+    "interface": {
+      "type": "object",
+      "required": ["system_name", "direction"],
+      "properties": {
+        "system_name": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Name of the connected system (e.g., Central Lab LIMS, Safety Database)"
+        },
+        "direction": {
+          "type": "string",
+          "enum": ["INBOUND", "OUTBOUND", "BIDIRECTIONAL"],
+          "description": "Direction of data flow relative to this system"
+        },
+        "data_type": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Type of data exchanged (e.g., Subject Demographics, Lab Results, AE Reports)"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}
