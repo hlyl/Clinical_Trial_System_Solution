@@ -46,7 +46,7 @@ st.markdown(
 
         /* Base Layout */
         .reportview-container, .main .block-container {
-            background: var(--nn-snow-white);
+            background: var(--nn-light-blue);
             font-family: Arial, sans-serif;
         }
 
@@ -125,9 +125,9 @@ st.markdown(
             background-color: rgba(0, 25, 101, 0.05);
         }
 
-        /* Sidebar - Light background with True Blue accents */
+        /* Sidebar - Light Blue background with True Blue accents */
         section[data-testid="stSidebar"] {
-            background-color: rgba(245, 209, 216, 0.15);
+            background-color: var(--nn-light-blue);
             border-right: 1px solid rgba(0, 25, 101, 0.1);
         }
 
