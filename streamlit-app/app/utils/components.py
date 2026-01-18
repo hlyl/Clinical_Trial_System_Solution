@@ -1,7 +1,7 @@
 """UI component utilities for Streamlit."""
 
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 import pandas as pd
 import streamlit as st
@@ -14,7 +14,7 @@ def format_date(date_str: Optional[str]) -> str:
     try:
         dt = datetime.fromisoformat(date_str.replace("Z", "+00:00"))
         return dt.strftime("%b %d, %Y")
-    except:
+    except Exception:
         return date_str
 
 
@@ -25,26 +25,42 @@ def format_datetime(datetime_str: Optional[str]) -> str:
     try:
         dt = datetime.fromisoformat(datetime_str.replace("Z", "+00:00"))
         return dt.strftime("%b %d, %Y %H:%M")
-    except:
+    except Exception:
         return datetime_str
 
 
 def status_badge(status: str) -> str:
-    """Return HTML for status badge."""
+    """Return HTML for status badge using Novo Nordisk CVI spot colors."""
+    # Novo Nordisk CVI Spot Colors
+    # Lava Red: error/failed/overdue states
+    # Golden Yellow: warning/pending/planned states
+    # Forest Green: success/active/confirmed/healthy states
+    # True Blue: neutral/completed states
+    # Warm Grey: inactive states
     status_colors = {
-        "ACTIVE": "#28a745",
-        "PLANNED": "#ffc107",
-        "COMPLETED": "#6c757d",
-        "PENDING": "#17a2b8",
-        "CONFIRMED": "#28a745",
-        "OVERDUE": "#dc3545",
-        "VALIDATED": "#28a745",
-        "FAILED": "#dc3545",
-        "HEALTHY": "#28a745",
-        "UNHEALTHY": "#dc3545",
+        "ACTIVE": "#228B22",  # Forest Green
+        "PLANNED": "#FFD700",  # Golden Yellow
+        "COMPLETED": "#001965",  # True Blue
+        "PENDING": "#FFD700",  # Golden Yellow
+        "CONFIRMED": "#228B22",  # Forest Green
+        "OVERDUE": "#DC143C",  # Lava Red
+        "VALIDATED": "#228B22",  # Forest Green
+        "FAILED": "#DC143C",  # Lava Red
+        "HEALTHY": "#228B22",  # Forest Green
+        "UNHEALTHY": "#DC143C",  # Lava Red
+        "INACTIVE": "#C9C0B7",  # Warm Grey
     }
-    color = status_colors.get(status, "#6c757d")
-    return f"<span style='background-color: {color}; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold;'>{status}</span>"
+    color = status_colors.get(status, "#8B8D8F")  # Granite Grey as fallback
+
+    # Use white text for dark colors, True Blue for light colors
+    dark_colors = ["#228B22", "#001965", "#DC143C", "#8B8D8F", "#C9C0B7"]
+    text_color = "#FFFFFF" if color in dark_colors else "#001965"
+
+    badge_style = (
+        f"background-color: {color}; color: {text_color}; padding: 6px 12px; "
+        f"border-radius: 24px; font-weight: 500; font-size: 0.875rem;"
+    )
+    return f"<span style='{badge_style}'>{status}</span>"
 
 
 def render_metric_cards(metrics: Dict[str, Any]):

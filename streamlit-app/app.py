@@ -2,7 +2,6 @@
 
 import os
 from pathlib import Path
-from typing import Optional
 
 import streamlit as st
 from dotenv import load_dotenv
@@ -25,35 +24,201 @@ st.set_page_config(
     },
 )
 
-# Theme configuration
+# Novo Nordisk CVI Theme configuration
 st.markdown(
     """
     <style>
-        /* Custom CSS for better UX */
-        .reportview-container {
-            background: #f0f2f6;
+        /* Novo Nordisk Corporate Visual Identity */
+        /* Color Palette */
+        :root {
+            --nn-true-blue: #001965;
+            --nn-snow-white: #FFFFFF;
+            --nn-sea-blue: #0055B8;
+            --nn-light-blue: #7AB3E6;
+            --nn-ocean-green: #4DA398;
+            --nn-rose-pink: #F5D1D8;
+            --nn-warm-grey: #C9C0B7;
+            --nn-granite-grey: #8B8D8F;
+            --nn-lava-red: #DC143C;
+            --nn-golden-yellow: #FFD700;
+            --nn-forest-green: #228B22;
         }
-        .stMetric {
-            background-color: white;
-            border-radius: 8px;
-            padding: 15px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+        /* Base Layout */
+        .reportview-container, .main .block-container {
+            background: var(--nn-snow-white);
+            font-family: Arial, sans-serif;
         }
-        .stCard {
-            background-color: white;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            margin-bottom: 10px;
+
+        /* Typography - Novo Nordisk Style */
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--nn-true-blue) !important;
+            font-weight: 300 !important;
         }
+
         h1 {
-            color: #1f77b4;
-            border-bottom: 3px solid #1f77b4;
-            padding-bottom: 10px;
+            font-size: 2.5rem !important;
+            border-bottom: 2px solid var(--nn-sea-blue);
+            padding-bottom: 12px;
+            margin-bottom: 24px;
         }
+
         h2 {
-            color: #0056b3;
-            margin-top: 25px;
+            font-size: 1.75rem !important;
+            margin-top: 32px;
+            margin-bottom: 16px;
+        }
+
+        h3 {
+            font-size: 1.25rem !important;
+            font-weight: 400 !important;
+        }
+
+        /* Body text should be True Blue, not black */
+        body, .stMarkdown, p, div, span, label {
+            color: var(--nn-true-blue) !important;
+        }
+
+        /* Metric Cards - Clean, rounded corners */
+        .stMetric {
+            background-color: var(--nn-snow-white);
+            border-radius: 8px;
+            padding: 16px;
+            border: 1px solid rgba(0, 25, 101, 0.1);
+            box-shadow: 0 2px 4px rgba(0, 25, 101, 0.05);
+        }
+
+        .stMetric label {
+            color: var(--nn-sea-blue) !important;
+            font-size: 0.875rem !important;
+        }
+
+        .stMetric [data-testid="stMetricValue"] {
+            color: var(--nn-true-blue) !important;
+            font-weight: 500 !important;
+        }
+
+        /* Buttons - Novo Nordisk Style (rounded, True Blue) */
+        .stButton button {
+            background-color: var(--nn-true-blue);
+            color: var(--nn-snow-white);
+            border-radius: 24px;
+            border: none;
+            padding: 10px 24px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .stButton button:hover {
+            background-color: var(--nn-sea-blue);
+            box-shadow: 0 4px 8px rgba(0, 25, 101, 0.2);
+        }
+
+        /* Secondary buttons */
+        .stButton button[kind="secondary"] {
+            background-color: transparent;
+            color: var(--nn-true-blue);
+            border: 2px solid var(--nn-true-blue);
+        }
+
+        .stButton button[kind="secondary"]:hover {
+            background-color: rgba(0, 25, 101, 0.05);
+        }
+
+        /* Sidebar - Light background with True Blue accents */
+        section[data-testid="stSidebar"] {
+            background-color: rgba(245, 209, 216, 0.15);
+            border-right: 1px solid rgba(0, 25, 101, 0.1);
+        }
+
+        section[data-testid="stSidebar"] h1,
+        section[data-testid="stSidebar"] h2,
+        section[data-testid="stSidebar"] h3 {
+            color: var(--nn-true-blue) !important;
+        }
+
+        /* Input fields - subtle rounded corners */
+        .stTextInput input, .stSelectbox select, .stNumberInput input {
+            border-radius: 4px;
+            border: 1px solid var(--nn-warm-grey);
+            color: var(--nn-true-blue);
+        }
+
+        .stTextInput input:focus, .stSelectbox select:focus, .stNumberInput input:focus {
+            border-color: var(--nn-sea-blue);
+            box-shadow: 0 0 0 1px var(--nn-sea-blue);
+        }
+
+        /* Dataframe/Table styling */
+        .stDataFrame {
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        /* Success/Error/Warning states using spot colors */
+        .stSuccess {
+            background-color: rgba(34, 139, 34, 0.1);
+            color: var(--nn-forest-green);
+            border-left: 4px solid var(--nn-forest-green);
+            border-radius: 4px;
+        }
+
+        .stError {
+            background-color: rgba(220, 20, 60, 0.1);
+            color: var(--nn-lava-red);
+            border-left: 4px solid var(--nn-lava-red);
+            border-radius: 4px;
+        }
+
+        .stWarning {
+            background-color: rgba(255, 215, 0, 0.1);
+            color: #8B7500;
+            border-left: 4px solid var(--nn-golden-yellow);
+            border-radius: 4px;
+        }
+
+        /* Tabs */
+        .stTabs [data-baseweb="tab-list"] {
+            gap: 8px;
+        }
+
+        .stTabs [data-baseweb="tab"] {
+            color: var(--nn-sea-blue);
+            border-radius: 4px 4px 0 0;
+            font-weight: 500;
+        }
+
+        .stTabs [aria-selected="true"] {
+            background-color: var(--nn-true-blue);
+            color: var(--nn-snow-white);
+        }
+
+        /* Dividers */
+        hr {
+            border-color: rgba(0, 25, 101, 0.15);
+        }
+
+        /* Cards/Expanders */
+        .streamlit-expanderHeader {
+            background-color: rgba(0, 85, 184, 0.05);
+            border-radius: 4px;
+            color: var(--nn-true-blue);
+        }
+
+        /* Remove black text - enforce True Blue throughout */
+        * {
+            color: var(--nn-true-blue);
+        }
+
+        /* Links */
+        a {
+            color: var(--nn-sea-blue) !important;
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: var(--nn-light-blue) !important;
+            text-decoration: underline;
         }
     </style>
     """,
