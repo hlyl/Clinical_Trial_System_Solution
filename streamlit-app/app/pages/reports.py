@@ -1,8 +1,10 @@
 """Reports page - Analytics and exports."""
 
+import csv
+import io
+from collections import Counter
 from datetime import datetime, timedelta
 
-import pandas as pd
 import plotly.express as px
 import streamlit as st
 
@@ -94,12 +96,11 @@ def render_analysis_tab():
 
     with col1:
         st.write("**Systems by Category**")
-        df = pd.DataFrame(systems)
-        category_counts = df.get("category_code", pd.Series()).value_counts()
-        if not category_counts.empty:
+        category_counts = Counter(s.get("category_code", "") for s in systems if s.get("category_code"))
+        if category_counts:
             fig = px.bar(
-                x=category_counts.index,
-                y=category_counts.values,
+                x=list(category_counts.keys()),
+                y=list(category_counts.values()),
                 labels={"x": "Category", "y": "Count"},
                 title="Systems by Category",
             )
@@ -107,11 +108,11 @@ def render_analysis_tab():
 
     with col2:
         st.write("**Systems by Status**")
-        status_counts = df.get("validation_status", pd.Series()).value_counts()
-        if not status_counts.empty:
+        status_counts = Counter(s.get("validation_status_code", "") for s in systems if s.get("validation_status_code"))
+        if status_counts:
             fig = px.bar(
-                x=status_counts.index,
-                y=status_counts.values,
+                x=list(status_counts.keys()),
+                y=list(status_counts.values()),
                 labels={"x": "Status", "y": "Count"},
                 title="Systems by Validation Status",
             )
@@ -120,9 +121,17 @@ def render_analysis_tab():
     st.divider()
 
     st.write("**System Details**")
-    display_df = df[["instance_code", "platform_name", "category_code", "validation_status", "created_at"]].copy()
-    display_df.columns = ["Code", "Platform", "Category", "Status", "Created"]
-    st.dataframe(display_df, use_container_width=True, hide_index=True)
+    display_data = [
+        {
+            "Code": s.get("instance_code", ""),
+            "Platform": s.get("platform_name", ""),
+            "Category": s.get("category_code", ""),
+            "Status": s.get("validation_status_code", ""),
+            "Created": s.get("created_at", ""),
+        }
+        for s in systems
+    ]
+    st.dataframe(display_data, use_container_width=True, hide_index=True)
 
 
 def render_compliance_tab():
@@ -170,21 +179,24 @@ def render_compliance_tab():
             systems = response.get("data", []) if response else []
 
         if systems:
-            df = pd.DataFrame(systems)
-            validated = len(df[df.get("validation_status") == "VALIDATED"])
-            total = len(df)
+            validated = sum(1 for s in systems if s.get("validation_status_code") == "VALIDATED")
+            total = len(systems)
 
             st.progress(validated / total if total > 0 else 0)
             st.write(f"**Coverage**: {validated}/{total} systems ({validated/total*100:.1f}%)")
 
             st.write("**Systems Needing Validation**")
-            pending = df[df.get("validation_status") != "VALIDATED"]
-            if not pending.empty:
-                st.dataframe(
-                    pending[["instance_code", "platform_name", "validation_status"]],
-                    use_container_width=True,
-                    hide_index=True,
-                )
+            pending = [s for s in systems if s.get("validation_status_code") != "VALIDATED"]
+            if pending:
+                pending_data = [
+                    {
+                        "Code": s.get("instance_code", ""),
+                        "Platform": s.get("platform_name", ""),
+                        "Status": s.get("validation_status_code", ""),
+                    }
+                    for s in pending
+                ]
+                st.dataframe(pending_data, use_container_width=True, hide_index=True)
             else:
                 st.success("All systems validated! ✅")
 
@@ -200,9 +212,13 @@ def render_compliance_tab():
             st.metric("Total Trials", len(trials))
             st.write("**Trial Status Breakdown**")
 
-            status_counts = pd.DataFrame(trials).get("trial_status", pd.Series()).value_counts()
-            if not status_counts.empty:
-                fig = px.bar(x=status_counts.index, y=status_counts.values, labels={"x": "Status", "y": "Count"})
+            status_counts = Counter(t.get("trial_status", "") for t in trials if t.get("trial_status"))
+            if status_counts:
+                fig = px.bar(
+                    x=list(status_counts.keys()),
+                    y=list(status_counts.values()),
+                    labels={"x": "Status", "y": "Count"},
+                )
                 st.plotly_chart(fig, use_container_width=True)
 
     else:  # Confirmation Status Overview
@@ -213,26 +229,29 @@ def render_compliance_tab():
             confirmations = response.get("data", []) if response else []
 
         if confirmations:
-            df = pd.DataFrame(confirmations)
-            status_counts = df.get("confirmation_status", pd.Series()).value_counts()
+            status_counts = Counter(
+                c.get("confirmation_status", "") for c in confirmations if c.get("confirmation_status")
+            )
 
             col1, col2, col3 = st.columns(3)
 
             with col1:
-                pending = len(df[df.get("confirmation_status") == "PENDING"])
+                pending = sum(1 for c in confirmations if c.get("confirmation_status") == "PENDING")
                 st.metric("Pending", pending)
 
             with col2:
-                confirmed = len(df[df.get("confirmation_status") == "CONFIRMED"])
+                confirmed = sum(1 for c in confirmations if c.get("confirmation_status") == "CONFIRMED")
                 st.metric("Confirmed", confirmed)
 
             with col3:
-                rejected = len(df[df.get("confirmation_status") == "REJECTED"])
+                rejected = sum(1 for c in confirmations if c.get("confirmation_status") == "REJECTED")
                 st.metric("Rejected", rejected)
 
-            if not status_counts.empty:
+            if status_counts:
                 fig = px.pie(
-                    values=status_counts.values, names=status_counts.index, title="Confirmation Status Distribution"
+                    values=list(status_counts.values()),
+                    names=list(status_counts.keys()),
+                    title="Confirmation Status Distribution",
                 )
                 st.plotly_chart(fig, use_container_width=True)
 
@@ -285,29 +304,22 @@ def render_export_tab():
                 show_error("No data available for export.")
                 return
 
-            df = pd.DataFrame(data)
-
             # Generate download file
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             filename = f"ctsr_export_{export_type.lower().replace(' ', '_')}_{timestamp}"
 
             if export_format == "CSV":
-                csv = df.to_csv(index=False)
-                st.download_button(label="📥 Download CSV", data=csv, file_name=f"{filename}.csv", mime="text/csv")
+                # Use csv module to create CSV
+                output = io.StringIO()
+                if data:
+                    writer = csv.DictWriter(output, fieldnames=data[0].keys())
+                    writer.writeheader()
+                    writer.writerows(data)
+                csv_data = output.getvalue()
+                st.download_button(label="📥 Download CSV", data=csv_data, file_name=f"{filename}.csv", mime="text/csv")
 
             elif export_format == "Excel":
-                import io
-
-                buffer = io.BytesIO()
-                with pd.ExcelWriter(buffer, engine="openpyxl") as writer:
-                    df.to_excel(writer, index=False, sheet_name="Data")
-                buffer.seek(0)
-                st.download_button(
-                    label="📥 Download Excel",
-                    data=buffer.getvalue(),
-                    file_name=f"{filename}.xlsx",
-                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                )
+                st.warning("Excel export requires pandas. Please download as CSV or JSON instead.")
 
             else:  # JSON
                 import json
@@ -317,4 +329,4 @@ def render_export_tab():
                     label="📥 Download JSON", data=json_str, file_name=f"{filename}.json", mime="application/json"
                 )
 
-            show_info(f"Export ready: {len(df)} records")
+            show_info(f"Export ready: {len(data)} records")

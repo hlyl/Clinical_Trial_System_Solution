@@ -1,6 +1,6 @@
 """Confirmations page - Manage confirmations."""
 
-import pandas as pd
+
 import streamlit as st
 
 from app.utils.api_client import api_client
@@ -66,16 +66,17 @@ def render_browse_tab():
         st.info("No confirmations found.")
         return
 
-    df = pd.DataFrame(confirmations)
-    # Show plain text status instead of HTML badge to avoid raw markup in table
-    df["Status"] = df["confirmation_status"] if "confirmation_status" in df.columns else ""
-    df["Type"] = df["confirmation_type"] if "confirmation_type" in df.columns else ""
-    df["Created"] = df["created_at"].apply(format_date) if "created_at" in df.columns else ""
+    display_data = [
+        {
+            "ID": str(c.get("confirmation_id", ""))[:8],  # Show first 8 chars of UUID
+            "Type": c.get("confirmation_type", ""),
+            "Status": c.get("confirmation_status", ""),
+            "Created": format_date(c.get("created_at", "")),
+        }
+        for c in confirmations
+    ]
 
-    display_df = df[["confirmation_id", "confirmation_type", "Status", "Created"]].copy()
-    display_df.columns = ["ID", "Type", "Status", "Created"]
-
-    st.dataframe(display_df, use_container_width=True, hide_index=True)
+    st.dataframe(display_data, use_container_width=True, hide_index=True)
 
 
 def render_create_tab():

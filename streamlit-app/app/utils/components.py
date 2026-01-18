@@ -3,7 +3,6 @@
 from datetime import datetime
 from typing import Any, Dict, Optional
 
-import pandas as pd
 import streamlit as st
 
 
@@ -60,58 +59,6 @@ def render_metric_cards(metrics: Dict[str, Any]):
     for col, (label, value) in zip(cols, metrics.items()):
         with col:
             st.metric(label, value)
-
-
-def render_dataframe_with_actions(
-    df: pd.DataFrame,
-    key_column: str,
-    on_view: Optional[callable] = None,
-    on_edit: Optional[callable] = None,
-    on_delete: Optional[callable] = None,
-) -> Optional[str]:
-    """Render dataframe with action buttons.
-
-    Returns the ID of the row that was clicked, or None.
-    """
-    if df.empty:
-        st.info("No data available.")
-        return None
-
-    # Add action column
-    action_cols = []
-    if on_view or on_edit or on_delete:
-        action_cols.append("Actions")
-
-    display_df = df.copy()
-
-    # Display table
-    st.dataframe(display_df, use_container_width=True, hide_index=True)
-
-    # Buttons below table
-    st.write("---")
-
-    row_id = None
-    for idx, row in df.iterrows():
-        col1, col2, col3, col4 = st.columns([1, 1, 1, 2])
-
-        row_id_value = str(row[key_column])
-
-        with col1:
-            if on_view and st.button("👁️ View", key=f"view_{idx}_{row_id_value}"):
-                on_view(row_id_value)
-                row_id = row_id_value
-
-        with col2:
-            if on_edit and st.button("✏️ Edit", key=f"edit_{idx}_{row_id_value}"):
-                on_edit(row_id_value)
-                row_id = row_id_value
-
-        with col3:
-            if on_delete and st.button("🗑️ Delete", key=f"delete_{idx}_{row_id_value}"):
-                on_delete(row_id_value)
-                row_id = row_id_value
-
-    return row_id
 
 
 def render_form_section(

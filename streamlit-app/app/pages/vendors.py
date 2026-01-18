@@ -2,17 +2,10 @@
 
 from datetime import datetime
 
-import pandas as pd
 import streamlit as st
 
 from app.utils.api_client import api_client
-from app.utils.components import (
-    format_date,
-    render_dataframe_with_actions,
-    render_form_section,
-    show_error,
-    show_success,
-)
+from app.utils.components import format_date, render_form_section, show_error, show_success
 
 
 def render():
@@ -85,16 +78,19 @@ def render_browse_tab():
         st.info("No vendors found.")
         return
 
-    # Prepare dataframe
-    df = pd.DataFrame(vendors)
-    df["Created"] = df["created_at"].apply(format_date)
-    df["Type"] = df["vendor_type"].str.replace("_", " ")
-    df["Status"] = df["is_active"].apply(lambda x: "✅ Active" if x else "❌ Inactive")
+    display_data = [
+        {
+            "Code": v.get("vendor_code", ""),
+            "Name": v.get("vendor_name", ""),
+            "Type": v.get("vendor_type", "").replace("_", " "),
+            "Status": "✅ Active" if v.get("is_active") else "❌ Inactive",
+            "Contact": v.get("contact_email", ""),
+            "Created": format_date(v.get("created_at", "")),
+        }
+        for v in vendors
+    ]
 
-    display_df = df[["vendor_code", "vendor_name", "Type", "Status", "contact_email", "Created"]].copy()
-    display_df.columns = ["Code", "Name", "Type", "Status", "Contact", "Created"]
-
-    st.dataframe(display_df, use_container_width=True, hide_index=True)
+    st.dataframe(display_data, use_container_width=True, hide_index=True)
 
     # Pagination info
     col1, col2, col3 = st.columns(3)

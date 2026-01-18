@@ -1,6 +1,5 @@
 """Trials page - Manage clinical trials."""
 
-import pandas as pd
 import streamlit as st
 
 from app.utils.api_client import api_client
@@ -63,14 +62,17 @@ def render_browse_tab():
         st.info("No trials found.")
         return
 
-    df = pd.DataFrame(trials)
-    df["Status"] = df["trial_status"] if "trial_status" in df.columns else ""
-    df["Created"] = df["created_at"].apply(format_date) if "created_at" in df.columns else ""
+    display_data = [
+        {
+            "Protocol": t.get("protocol_number", ""),
+            "Title": t.get("trial_title", ""),
+            "Status": t.get("trial_status", ""),
+            "Created": format_date(t.get("created_at", "")),
+        }
+        for t in trials
+    ]
 
-    display_df = df[["protocol_number", "trial_title", "Status", "Created"]].copy()
-    display_df.columns = ["Protocol", "Title", "Status", "Created"]
-
-    st.dataframe(display_df, use_container_width=True, hide_index=True)
+    st.dataframe(display_data, use_container_width=True, hide_index=True)
 
 
 def render_create_tab():

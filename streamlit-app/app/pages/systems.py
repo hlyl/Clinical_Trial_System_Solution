@@ -1,6 +1,5 @@
 """Systems page - Manage system instances."""
 
-import pandas as pd
 import streamlit as st
 
 from app.utils.api_client import api_client
@@ -65,15 +64,18 @@ def render_browse_tab():
         st.info("No systems found.")
         return
 
-    df = pd.DataFrame(systems)
-    df["Category"] = df["category_code"] if "category_code" in df.columns else ""
-    df["Validation"] = df["validation_status_code"] if "validation_status_code" in df.columns else ""
-    df["Created"] = df["created_at"].apply(format_date) if "created_at" in df.columns else ""
+    display_data = [
+        {
+            "Code": s.get("instance_code", ""),
+            "Platform": s.get("platform_name", ""),
+            "Category": s.get("category_code", ""),
+            "Status": s.get("validation_status_code", ""),
+            "Created": format_date(s.get("created_at", "")),
+        }
+        for s in systems
+    ]
 
-    display_df = df[["instance_code", "platform_name", "Category", "Validation", "Created"]].copy()
-    display_df.columns = ["Code", "Platform", "Category", "Status", "Created"]
-
-    st.dataframe(display_df, use_container_width=True, hide_index=True)
+    st.dataframe(display_data, use_container_width=True, hide_index=True)
 
 
 def render_create_tab():
