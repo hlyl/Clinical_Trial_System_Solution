@@ -134,7 +134,7 @@ def render_assign_tab():
     """Render assign systems to trials tab."""
     st.subheader("Assign Systems to Trials")
 
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns(3)
 
     with col1:
         with st.spinner("Loading trials..."):
@@ -155,10 +155,25 @@ def render_assign_tab():
         # Create vendor lookup map
         vendor_map = {v["vendor_id"]: v["vendor_name"] for v in vendors}
 
+        # Get unique vendors from systems
+        unique_vendors = sorted(set(vendor_map.get(s.get("platform_vendor_id"), "Unknown Vendor") for s in systems))
+        vendor_options = ["All Vendors"] + unique_vendors
+
+        selected_vendor = st.selectbox("Select Vendor", options=vendor_options)
+
+    with col3:
+        # Filter systems by selected vendor
+        if selected_vendor == "All Vendors":
+            filtered_systems = systems
+        else:
+            filtered_systems = [
+                s for s in systems if vendor_map.get(s.get("platform_vendor_id"), "Unknown Vendor") == selected_vendor
+            ]
+
         # Create system display options with vendor info
         system_display_map = {}
         system_options = []
-        for s in systems:
+        for s in filtered_systems:
             vendor_name = vendor_map.get(s.get("platform_vendor_id"), "Unknown Vendor")
             display_text = f"{s['instance_code']} ({vendor_name})"
             system_display_map[display_text] = s
