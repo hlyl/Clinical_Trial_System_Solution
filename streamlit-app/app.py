@@ -83,6 +83,21 @@ st.markdown(
             background-color: var(--nn-light-blue) !important;
         }
 
+        /* Streamlit "Made with Streamlit" footer */
+        footer[data-testid="stStatusWidget"] {
+            background-color: var(--nn-light-blue) !important;
+        }
+
+        /* Footer container */
+        [data-testid="stDecoration"] {
+            background-color: var(--nn-light-blue) !important;
+        }
+
+        /* All footer elements */
+        footer > div {
+            background-color: var(--nn-light-blue) !important;
+        }
+
         /* Typography - Novo Nordisk Style */
         h1, h2, h3, h4, h5, h6 {
             color: var(--nn-true-blue) !important;
