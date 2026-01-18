@@ -1,9 +1,9 @@
 """Settings page - Configuration and preferences."""
 
-import streamlit as st
 import os
 
-from app.utils.components import show_success, show_error, show_info
+import streamlit as st
+from app.utils.components import show_error, show_info, show_success
 
 
 def render():
@@ -33,7 +33,7 @@ def render_api_config_tab():
         api_url = st.text_input(
             "API Base URL",
             value=st.session_state.get("api_base_url", "http://localhost:8000"),
-            placeholder="http://localhost:8000"
+            placeholder="http://localhost:8000",
         )
 
         st.info(
@@ -44,12 +44,10 @@ def render_api_config_tab():
         user_email = st.text_input(
             "User Email (for audit trail)",
             value=st.session_state.get("user_email", "user@example.com"),
-            placeholder="your.email@company.com"
+            placeholder="your.email@company.com",
         )
 
-        st.caption(
-            "This email is recorded with all API operations for audit and compliance purposes."
-        )
+        st.caption("This email is recorded with all API operations for audit and compliance purposes.")
 
         submitted = st.form_submit_button("💾 Save API Settings", type="primary")
 
@@ -64,6 +62,7 @@ def render_api_config_tab():
 
             # Test connection
             from app.utils.api_client import APIClient
+
             test_client = APIClient(base_url=api_url)
             health = test_client.get_health()
 
@@ -86,48 +85,23 @@ def render_preferences_tab():
     with col1:
         st.write("**Display Settings**")
 
-        theme = st.selectbox(
-            "Theme",
-            options=["Light", "Dark", "Auto"],
-            index=2
-        )
+        theme = st.selectbox("Theme", options=["Light", "Dark", "Auto"], index=2)
 
-        records_per_page = st.number_input(
-            "Records per Page",
-            min_value=10,
-            max_value=500,
-            value=50,
-            step=10
-        )
+        records_per_page = st.number_input("Records per Page", min_value=10, max_value=500, value=50, step=10)
 
         st.info("Adjust how many records are displayed in tables by default.")
 
     with col2:
         st.write("**Notification Settings**")
 
-        show_confirmations = st.checkbox(
-            "Show success notifications",
-            value=True
-        )
+        show_confirmations = st.checkbox("Show success notifications", value=True)
 
-        show_errors = st.checkbox(
-            "Show error notifications",
-            value=True
-        )
+        show_errors = st.checkbox("Show error notifications", value=True)
 
-        auto_refresh = st.checkbox(
-            "Auto-refresh dashboards",
-            value=False
-        )
+        auto_refresh = st.checkbox("Auto-refresh dashboards", value=False)
 
         if auto_refresh:
-            refresh_interval = st.slider(
-                "Refresh interval (seconds)",
-                min_value=5,
-                max_value=300,
-                value=60,
-                step=5
-            )
+            refresh_interval = st.slider("Refresh interval (seconds)", min_value=5, max_value=300, value=60, step=5)
 
     st.divider()
 
@@ -181,29 +155,24 @@ def render_data_management_tab():
                 "api_url": st.session_state.get("api_base_url", ""),
                 "user_email": st.session_state.get("user_email", ""),
                 "theme": "light",
-                "records_per_page": 50
+                "records_per_page": 50,
             }
 
             import json
+
             config_json = json.dumps(config, indent=2)
 
             st.download_button(
-                label="📥 Download Config",
-                data=config_json,
-                file_name="ctsr_config.json",
-                mime="application/json"
+                label="📥 Download Config", data=config_json, file_name="ctsr_config.json", mime="application/json"
             )
 
     with col2:
         st.write("")
-        uploaded_file = st.file_uploader(
-            "Import Configuration",
-            type=["json"],
-            label_visibility="collapsed"
-        )
+        uploaded_file = st.file_uploader("Import Configuration", type=["json"], label_visibility="collapsed")
 
         if uploaded_file:
             import json
+
             try:
                 config = json.load(uploaded_file)
                 if "api_url" in config:

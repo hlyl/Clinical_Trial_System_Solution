@@ -1,10 +1,10 @@
 """Dashboard page - Overview and key metrics."""
 
-import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
+import streamlit as st
 from app.utils.api_client import api_client
-from app.utils.components import render_metric_cards, format_datetime
+from app.utils.components import format_datetime, render_metric_cards
 
 
 def render():
@@ -49,9 +49,7 @@ def render():
                     go.Pie(
                         labels=list(trial_statuses.keys()),
                         values=list(trial_statuses.values()),
-                        marker=dict(
-                            colors=["#28a745", "#ffc107", "#6c757d"]
-                        ),
+                        marker=dict(colors=["#28a745", "#ffc107", "#6c757d"]),
                     )
                 ]
             )
@@ -71,9 +69,7 @@ def render():
                     go.Pie(
                         labels=list(validation_statuses.keys()),
                         values=list(validation_statuses.values()),
-                        marker=dict(
-                            colors=["#28a745", "#ffc107", "#dc3545", "#6c757d"]
-                        ),
+                        marker=dict(colors=["#28a745", "#ffc107", "#dc3545", "#6c757d"]),
                     )
                 ]
             )
@@ -86,18 +82,14 @@ def render():
 
     # Confirmation status distribution
     with col3:
-        confirmation_statuses = stats.get(
-            "confirmation_status_distribution", {}
-        )
+        confirmation_statuses = stats.get("confirmation_status_distribution", {})
         if confirmation_statuses:
             fig = go.Figure(
                 data=[
                     go.Pie(
                         labels=list(confirmation_statuses.keys()),
                         values=list(confirmation_statuses.values()),
-                        marker=dict(
-                            colors=["#28a745", "#17a2b8", "#dc3545"]
-                        ),
+                        marker=dict(colors=["#28a745", "#17a2b8", "#dc3545"]),
                     )
                 ]
             )
@@ -173,9 +165,7 @@ def render():
         st.metric("Systems Pending Validation", missing_validations)
 
     with col2:
-        expiring_validations = stats.get(
-            "systems_validation_expiring_soon", 0
-        )
+        expiring_validations = stats.get("systems_validation_expiring_soon", 0)
         st.metric("Validations Expiring Soon", expiring_validations)
 
     with col3:

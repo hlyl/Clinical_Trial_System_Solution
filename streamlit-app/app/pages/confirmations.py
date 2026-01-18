@@ -1,10 +1,9 @@
 """Confirmations page - Manage confirmations."""
 
-import streamlit as st
 import pandas as pd
-
+import streamlit as st
 from app.utils.api_client import api_client
-from app.utils.components import show_success, show_error, format_date, status_badge
+from app.utils.components import format_date, show_error, show_success
 
 
 def render():
@@ -33,13 +32,13 @@ def render_browse_tab():
     with col1:
         status_filter = st.selectbox(
             "Confirmation Status",
-            options=["All", "PENDING", "CONFIRMED", "REJECTED"],
+            options=["All", "PENDING", "COMPLETED", "OVERDUE"],
         )
 
     with col2:
         confirmation_type = st.selectbox(
             "Confirmation Type",
-            options=["All", "INFRASTRUCTURE_CHECK", "REGULATORY_REVIEW", "DATA_VALIDATION"],
+            options=["All", "PERIODIC", "DB_LOCK"],
         )
 
     with col3:
@@ -67,9 +66,8 @@ def render_browse_tab():
         return
 
     df = pd.DataFrame(confirmations)
-    df["Status"] = df.get("confirmation_status", "").apply(
-        lambda x: status_badge(x) if x else ""
-    )
+    # Show plain text status instead of HTML badge to avoid raw markup in table
+    df["Status"] = df.get("confirmation_status", "")
     df["Type"] = df.get("confirmation_type", "")
     df["Created"] = df.get("created_at", "").apply(format_date)
 
@@ -157,9 +155,7 @@ def render_review_tab():
     selected_id = st.selectbox("Select Confirmation", options=confirmation_ids)
 
     if selected_id:
-        confirmation = next(
-            (c for c in confirmations if str(c["confirmation_id"]) == selected_id), None
-        )
+        confirmation = next((c for c in confirmations if str(c["confirmation_id"]) == selected_id), None)
 
         if confirmation:
             col1, col2, col3 = st.columns(3)

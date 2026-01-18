@@ -372,6 +372,7 @@ class APIClient:
     def list_confirmations(
         self,
         confirmation_status: Optional[str] = None,
+        confirmation_type: Optional[str] = None,
         limit: int = 50,
         offset: int = 0,
         user_email: str = "dev@localhost",
@@ -383,6 +384,8 @@ class APIClient:
         }
         if confirmation_status:
             params["confirmation_status"] = confirmation_status
+        if confirmation_type:
+            params["confirmation_type"] = confirmation_type
 
         return self._make_request(
             "GET",
@@ -462,6 +465,4 @@ class APIClient:
 
 
 # Global API client instance
-api_client = APIClient(
-    base_url=os.getenv("API_BASE_URL", "http://localhost:8001")
-)
+api_client = APIClient(base_url=os.getenv("API_BASE_URL", "http://localhost:8001"))

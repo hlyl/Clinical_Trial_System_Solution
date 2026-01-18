@@ -1,10 +1,9 @@
 """Systems page - Manage system instances."""
 
-import streamlit as st
 import pandas as pd
-
+import streamlit as st
 from app.utils.api_client import api_client
-from app.utils.components import show_success, show_error, format_date
+from app.utils.components import format_date, show_error, show_success
 
 
 def render():
@@ -158,44 +157,27 @@ def render_manage_tab():
             col1, col2 = st.columns(2)
 
             with col1:
-                instance_code = st.text_input(
-                    "Instance Code",
-                    value=system.get("instance_code", "")
-                )
-                platform_name = st.text_input(
-                    "Platform Name",
-                    value=system.get("platform_name", "")
-                )
+                instance_code = st.text_input("Instance Code", value=system.get("instance_code", ""))
+                platform_name = st.text_input("Platform Name", value=system.get("platform_name", ""))
 
             with col2:
                 category_code = st.selectbox(
                     "Category",
                     options=["EDC", "LIMS", "LMS", "IRT", "RTSM", "OTHER"],
-                    index=["EDC", "LIMS", "LMS", "IRT", "RTSM", "OTHER"].index(
-                        system.get("category_code", "EDC")
-                    )
+                    index=["EDC", "LIMS", "LMS", "IRT", "RTSM", "OTHER"].index(system.get("category_code", "EDC")),
                 )
                 validation_status = st.selectbox(
                     "Validation Status",
                     options=["VALIDATED", "FAILED", "PENDING", "EXPIRED"],
                     index=["VALIDATED", "FAILED", "PENDING", "EXPIRED"].index(
                         system.get("validation_status_code", "PENDING")
-                    )
+                    ),
                 )
 
-            platform_version = st.text_input(
-                "Platform Version",
-                value=system.get("platform_version", "")
-            )
-            instance_name = st.text_input(
-                "Instance Name",
-                value=system.get("instance_name", "")
-            )
+            platform_version = st.text_input("Platform Version", value=system.get("platform_version", ""))
+            instance_name = st.text_input("Instance Name", value=system.get("instance_name", ""))
 
-            is_active = st.checkbox(
-                "Active",
-                value=system.get("is_active", True)
-            )
+            is_active = st.checkbox("Active", value=system.get("is_active", True))
 
             st.divider()
 

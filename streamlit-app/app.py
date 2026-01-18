@@ -66,9 +66,7 @@ def initialize_session_state():
     if "user_email" not in st.session_state:
         st.session_state.user_email = "dev@localhost"
     if "api_base_url" not in st.session_state:
-        st.session_state.api_base_url = os.getenv(
-            "API_BASE_URL", "http://localhost:8001"
-        )
+        st.session_state.api_base_url = os.getenv("API_BASE_URL", "http://localhost:8001")
     if "refresh_trigger" not in st.session_state:
         st.session_state.refresh_trigger = 0
     if "selected_vendor_id" not in st.session_state:

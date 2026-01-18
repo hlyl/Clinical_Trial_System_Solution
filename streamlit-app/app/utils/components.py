@@ -1,9 +1,10 @@
 """UI component utilities for Streamlit."""
 
-import streamlit as st
-import pandas as pd
-from typing import Any, Dict, List, Optional
 from datetime import datetime
+from typing import Any, Dict, List, Optional
+
+import pandas as pd
+import streamlit as st
 
 
 def format_date(date_str: Optional[str]) -> str:
@@ -89,23 +90,17 @@ def render_dataframe_with_actions(
         row_id_value = str(row[key_column])
 
         with col1:
-            if on_view and st.button(
-                "👁️ View", key=f"view_{idx}_{row_id_value}"
-            ):
+            if on_view and st.button("👁️ View", key=f"view_{idx}_{row_id_value}"):
                 on_view(row_id_value)
                 row_id = row_id_value
 
         with col2:
-            if on_edit and st.button(
-                "✏️ Edit", key=f"edit_{idx}_{row_id_value}"
-            ):
+            if on_edit and st.button("✏️ Edit", key=f"edit_{idx}_{row_id_value}"):
                 on_edit(row_id_value)
                 row_id = row_id_value
 
         with col3:
-            if on_delete and st.button(
-                "🗑️ Delete", key=f"delete_{idx}_{row_id_value}"
-            ):
+            if on_delete and st.button("🗑️ Delete", key=f"delete_{idx}_{row_id_value}"):
                 on_delete(row_id_value)
                 row_id = row_id_value
 

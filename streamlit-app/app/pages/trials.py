@@ -1,10 +1,9 @@
 """Trials page - Manage clinical trials."""
 
-import streamlit as st
 import pandas as pd
-
+import streamlit as st
 from app.utils.api_client import api_client
-from app.utils.components import show_success, show_error, format_date
+from app.utils.components import format_date, show_error, show_success
 
 
 def render():
@@ -92,7 +91,7 @@ def render_create_tab():
             therapeutic_area = st.text_input("Therapeutic Area", placeholder="e.g., ONCOLOGY")
 
         indication = st.text_input("Indication", placeholder="Disease/condition")
-        
+
         col1, col2 = st.columns(2)
 
         with col1:
