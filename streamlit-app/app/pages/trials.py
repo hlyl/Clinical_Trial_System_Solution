@@ -2,6 +2,7 @@
 
 import pandas as pd
 import streamlit as st
+
 from app.utils.api_client import api_client
 from app.utils.components import format_date, show_error, show_success
 
@@ -36,10 +37,10 @@ def render_browse_tab():
         )
 
     with col2:
-        sort_by = st.selectbox(
+        _ = st.selectbox(
             "Sort by",
             options=["Created (Newest)", "Created (Oldest)", "Protocol Number"],
-        )
+        )  # noqa: F841
 
     with col3:
         limit = st.number_input("Records per page", min_value=10, max_value=100, value=50)
@@ -171,7 +172,7 @@ def render_assign_tab():
                     )
 
                 if result:
-                    show_success(f"System linked to trial successfully!")
+                    show_success("System linked to trial successfully!")
                     st.session_state.refresh_trigger += 1
                     st.rerun()
                 else:

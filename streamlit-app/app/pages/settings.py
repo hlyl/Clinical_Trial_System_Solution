@@ -3,6 +3,7 @@
 import os
 
 import streamlit as st
+
 from app.utils.components import show_error, show_info, show_success
 
 
@@ -85,23 +86,23 @@ def render_preferences_tab():
     with col1:
         st.write("**Display Settings**")
 
-        theme = st.selectbox("Theme", options=["Light", "Dark", "Auto"], index=2)
+        _ = st.selectbox("Theme", options=["Light", "Dark", "Auto"], index=2)  # noqa: F841
 
-        records_per_page = st.number_input("Records per Page", min_value=10, max_value=500, value=50, step=10)
+        _ = st.number_input("Records per Page", min_value=10, max_value=500, value=50, step=10)  # noqa: F841
 
         st.info("Adjust how many records are displayed in tables by default.")
 
     with col2:
         st.write("**Notification Settings**")
 
-        show_confirmations = st.checkbox("Show success notifications", value=True)
+        _ = st.checkbox("Show success notifications", value=True)  # noqa: F841
 
-        show_errors = st.checkbox("Show error notifications", value=True)
+        _ = st.checkbox("Show error notifications", value=True)  # noqa: F841
 
         auto_refresh = st.checkbox("Auto-refresh dashboards", value=False)
 
         if auto_refresh:
-            refresh_interval = st.slider("Refresh interval (seconds)", min_value=5, max_value=300, value=60, step=5)
+            _ = st.slider("Refresh interval (seconds)", min_value=5, max_value=300, value=60, step=5)  # noqa: F841
 
     st.divider()
 

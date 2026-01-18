@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 import pandas as pd
 import plotly.express as px
 import streamlit as st
+
 from app.utils.api_client import api_client
 from app.utils.components import show_error, show_info
 

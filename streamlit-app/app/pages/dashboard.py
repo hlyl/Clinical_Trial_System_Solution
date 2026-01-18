@@ -3,6 +3,7 @@
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
+
 from app.utils.api_client import api_client
 from app.utils.components import format_datetime, render_metric_cards
 
@@ -15,7 +16,7 @@ def render():
     # Fetch data
     with st.spinner("Loading dashboard data..."):
         stats = api_client.get_admin_stats(st.session_state.user_email)
-        lookups = api_client.get_lookups()
+        _ = api_client.get_lookups()  # noqa: F841
 
     if not stats:
         st.error("Failed to load dashboard data.")

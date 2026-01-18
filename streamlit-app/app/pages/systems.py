@@ -2,6 +2,7 @@
 
 import pandas as pd
 import streamlit as st
+
 from app.utils.api_client import api_client
 from app.utils.components import format_date, show_error, show_success
 
