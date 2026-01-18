@@ -141,7 +141,7 @@ def render():
         )
 
     with col3:
-        health = api_client.get_health(st.session_state.user_email)
+        health = api_client.get_health()
         if health:
             st.metric(
                 "API Status",

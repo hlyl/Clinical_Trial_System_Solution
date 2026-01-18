@@ -459,7 +459,7 @@ class APIClient:
         """Get admin dashboard statistics."""
         return self._make_request(
             "GET",
-            "/api/v1/admin/stats",
+            "/api/v1/admin/dashboard",
             user_email=user_email,
         )
 
