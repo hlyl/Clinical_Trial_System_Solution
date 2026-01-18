@@ -52,10 +52,10 @@ async def close_db() -> None:
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
     """
     Dependency for getting database session.
-    
+
     Yields:
         AsyncSession: Database session
-        
+
     Example:
         @app.get("/items")
         async def get_items(db: AsyncSession = Depends(get_db)):

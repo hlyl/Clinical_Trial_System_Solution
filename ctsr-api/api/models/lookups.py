@@ -37,15 +37,9 @@ class CriticalityResponse(BaseModel):
 class LookupsResponse(BaseModel):
     """Complete lookups/reference data response."""
 
-    system_categories: List[SystemCategoryResponse] = Field(
-        ..., description="System category codes"
-    )
-    validation_statuses: List[ValidationStatusResponse] = Field(
-        ..., description="Validation status codes"
-    )
-    criticality_levels: List[CriticalityResponse] = Field(
-        ..., description="Criticality levels"
-    )
+    system_categories: List[SystemCategoryResponse] = Field(..., description="System category codes")
+    validation_statuses: List[ValidationStatusResponse] = Field(..., description="Validation status codes")
+    criticality_levels: List[CriticalityResponse] = Field(..., description="Criticality levels")
     vendor_types: List[str] = Field(..., description="Vendor type codes")
     hosting_models: List[str] = Field(..., description="Hosting model codes")
     data_hosting_regions: List[str] = Field(..., description="Data hosting region codes")

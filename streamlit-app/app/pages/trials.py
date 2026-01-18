@@ -63,8 +63,8 @@ def render_browse_tab():
         return
 
     df = pd.DataFrame(trials)
-    df["Status"] = df.get("trial_status", "")
-    df["Created"] = df.get("created_at", "").apply(format_date)
+    df["Status"] = df["trial_status"] if "trial_status" in df.columns else ""
+    df["Created"] = df["created_at"].apply(format_date) if "created_at" in df.columns else ""
 
     display_df = df[["protocol_number", "trial_title", "Status", "Created"]].copy()
     display_df.columns = ["Protocol", "Title", "Status", "Created"]

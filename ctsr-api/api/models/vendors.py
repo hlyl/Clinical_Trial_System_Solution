@@ -19,19 +19,13 @@ class VendorCreate(BaseModel):
         description="Unique vendor code (e.g., ICON_CRO)",
         pattern="^[A-Z0-9_]+$",
     )
-    vendor_name: str = Field(
-        ..., min_length=1, max_length=200, description="Display name"
-    )
+    vendor_name: str = Field(..., min_length=1, max_length=200, description="Display name")
     vendor_type: str = Field(
         ...,
         description="Vendor type",
     )
-    contact_name: Optional[str] = Field(
-        None, max_length=200, description="Primary contact name"
-    )
-    contact_email: Optional[str] = Field(
-        None, max_length=200, description="Primary contact email"
-    )
+    contact_name: Optional[str] = Field(None, max_length=200, description="Primary contact name")
+    contact_email: Optional[str] = Field(None, max_length=200, description="Primary contact email")
 
     @field_validator("vendor_type")
     @classmethod
@@ -57,16 +51,10 @@ class VendorCreate(BaseModel):
 class VendorUpdate(BaseModel):
     """Request model for updating a vendor."""
 
-    vendor_name: Optional[str] = Field(
-        None, min_length=1, max_length=200, description="Display name"
-    )
+    vendor_name: Optional[str] = Field(None, min_length=1, max_length=200, description="Display name")
     vendor_type: Optional[str] = Field(None, description="Vendor type")
-    contact_name: Optional[str] = Field(
-        None, max_length=200, description="Primary contact name"
-    )
-    contact_email: Optional[str] = Field(
-        None, max_length=200, description="Primary contact email"
-    )
+    contact_name: Optional[str] = Field(None, max_length=200, description="Primary contact name")
+    contact_email: Optional[str] = Field(None, max_length=200, description="Primary contact email")
     is_active: Optional[bool] = Field(None, description="Active status")
 
     @field_validator("vendor_type")

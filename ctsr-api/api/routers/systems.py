@@ -99,9 +99,7 @@ async def create_system(
         409 Conflict: If instance_code already exists
         400 Bad Request: If validation fails
     """
-    return await SystemService.create_system(
-        db=db, system_data=system_data, user_email=user.email
-    )
+    return await SystemService.create_system(db=db, system_data=system_data, user_email=user.email)
 
 
 @router.get(
@@ -131,9 +129,7 @@ async def get_system(
     Raises:
         404 Not Found: If system doesn't exist
     """
-    return await SystemService.get_system(
-        db=db, instance_id=instance_id, user_email=user.email
-    )
+    return await SystemService.get_system(db=db, instance_id=instance_id, user_email=user.email)
 
 
 @router.put(

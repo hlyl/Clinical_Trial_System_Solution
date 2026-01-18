@@ -38,7 +38,7 @@ class HealthResponse(BaseModel):
 async def get_health(db: AsyncSession = Depends(get_db)) -> HealthResponse:
     """
     Check service health and database connectivity.
-    
+
     Returns:
         HealthResponse: Health status information
     """

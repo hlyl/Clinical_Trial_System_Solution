@@ -49,16 +49,16 @@ async def get_current_user(
 ) -> User:
     """
     Extract and validate current user from JWT token.
-    
+
     In local development mode (AZURE_AD_ENABLED=false), returns a mock admin user.
     In production, validates Azure AD JWT token.
-    
+
     Args:
         authorization: Bearer token from Authorization header
-        
+
     Returns:
         User: Authenticated user information
-        
+
     Raises:
         AuthenticationError: If token is invalid or missing in production mode
     """
@@ -116,15 +116,15 @@ async def get_current_user(
 def require_role(required_role: UserRole):
     """
     Dependency factory for role-based authorization.
-    
+
     Usage:
         @app.get("/admin")
         async def admin_endpoint(user: User = Depends(require_role(UserRole.ADMIN))):
             ...
-    
+
     Args:
         required_role: Role required to access the endpoint
-        
+
     Returns:
         Dependency function that checks user role
     """
@@ -156,12 +156,12 @@ def get_optional_user(
 ) -> Optional[User]:
     """
     Get current user if authenticated, None otherwise.
-    
+
     Useful for endpoints that work differently for authenticated vs anonymous users.
-    
+
     Args:
         authorization: Bearer token from Authorization header
-        
+
     Returns:
         Optional[User]: User if authenticated, None otherwise
     """

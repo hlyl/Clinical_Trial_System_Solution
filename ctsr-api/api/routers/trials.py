@@ -40,7 +40,7 @@ async def list_trials(
 ):
     """
     List all trials with optional search and filters.
-    
+
     **Permissions:** VIEWER, TRIAL_LEAD, ADMIN
     """
     trials, meta = await TrialService.list_trials(
@@ -68,12 +68,10 @@ async def create_trial(
 ):
     """
     Create a new trial.
-    
+
     **Permissions:** TRIAL_LEAD, ADMIN
     """
-    return await TrialService.create_trial(
-        db=db, trial_data=trial_data, user_email=user.email
-    )
+    return await TrialService.create_trial(db=db, trial_data=trial_data, user_email=user.email)
 
 
 @router.get("/{trial_id}", response_model=TrialDetail, status_code=status.HTTP_200_OK)
@@ -84,7 +82,7 @@ async def get_trial(
 ):
     """
     Get trial details including linked systems.
-    
+
     **Permissions:** VIEWER, TRIAL_LEAD, ADMIN
     """
     return await TrialService.get_trial(db=db, trial_id=trial_id, user_email=user.email)
@@ -99,12 +97,10 @@ async def update_trial(
 ):
     """
     Update a trial.
-    
+
     **Permissions:** TRIAL_LEAD, ADMIN
     """
-    return await TrialService.update_trial(
-        db=db, trial_id=trial_id, trial_data=trial_data, user_email=user.email
-    )
+    return await TrialService.update_trial(db=db, trial_id=trial_id, trial_data=trial_data, user_email=user.email)
 
 
 @router.post(
@@ -120,12 +116,10 @@ async def link_system_to_trial(
 ):
     """
     Link a system to a trial with criticality assignment.
-    
+
     **Permissions:** TRIAL_LEAD, ADMIN
     """
-    return await TrialService.link_system(
-        db=db, trial_id=trial_id, link_data=link_data, user_email=user.email
-    )
+    return await TrialService.link_system(db=db, trial_id=trial_id, link_data=link_data, user_email=user.email)
 
 
 @router.put(
@@ -142,7 +136,7 @@ async def update_system_link(
 ):
     """
     Update a trial-system link (e.g., change criticality).
-    
+
     **Permissions:** TRIAL_LEAD, ADMIN
     """
     return await TrialService.update_system_link(
@@ -166,10 +160,8 @@ async def unlink_system_from_trial(
 ):
     """
     Unlink a system from a trial (soft delete).
-    
+
     **Permissions:** TRIAL_LEAD, ADMIN
     """
-    await TrialService.unlink_system(
-        db=db, trial_id=trial_id, instance_id=instance_id, user_email=user.email
-    )
+    await TrialService.unlink_system(db=db, trial_id=trial_id, instance_id=instance_id, user_email=user.email)
     return None

@@ -16,7 +16,9 @@ async def test_vendor_crud_flow(client, unique_code):
     create_response = await client.post("/api/v1/vendors", json=create_payload)
     if create_response.status_code != 201:
         print(f"Response body: {create_response.text}")
-    assert create_response.status_code == 201, f"Expected 201, got {create_response.status_code}: {create_response.text}"
+    assert (
+        create_response.status_code == 201
+    ), f"Expected 201, got {create_response.status_code}: {create_response.text}"
     created = create_response.json()
 
     vendor_id = created["vendor_id"]

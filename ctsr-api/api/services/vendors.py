@@ -45,9 +45,7 @@ class VendorService:
         Returns:
             VendorListResponse: List of vendors with pagination metadata
         """
-        logger.info(
-            f"Listing vendors - user: {user_email}, type: {vendor_type}, active: {is_active}"
-        )
+        logger.info(f"Listing vendors - user: {user_email}, type: {vendor_type}, active: {is_active}")
 
         # Build query
         query = select(Vendor)
@@ -64,11 +62,7 @@ class VendorService:
         total = total_result.scalar() or 0
 
         # Apply pagination and ordering
-        query = (
-            query.order_by(Vendor.vendor_name)
-            .limit(pagination.limit)
-            .offset(pagination.offset)
-        )
+        query = query.order_by(Vendor.vendor_name).limit(pagination.limit).offset(pagination.offset)
 
         # Execute query
         result = await db.execute(query)
@@ -78,15 +72,11 @@ class VendorService:
 
         return VendorListResponse(
             data=[VendorResponse.model_validate(v) for v in vendors],
-            meta=PaginationMeta(
-                total=total, limit=pagination.limit, offset=pagination.offset
-            ),
+            meta=PaginationMeta(total=total, limit=pagination.limit, offset=pagination.offset),
         )
 
     @staticmethod
-    async def create_vendor(
-        db: AsyncSession, vendor_data: VendorCreate, user_email: str
-    ) -> VendorResponse:
+    async def create_vendor(db: AsyncSession, vendor_data: VendorCreate, user_email: str) -> VendorResponse:
         """
         Create a new vendor.
 
@@ -105,9 +95,7 @@ class VendorService:
         logger.info(f"Creating vendor {vendor_data.vendor_code} by user {user_email}")
 
         # Check if vendor_code already exists
-        existing = await db.execute(
-            select(Vendor).where(Vendor.vendor_code == vendor_data.vendor_code)
-        )
+        existing = await db.execute(select(Vendor).where(Vendor.vendor_code == vendor_data.vendor_code))
         if existing.scalar_one_or_none():
             raise ConflictError(
                 f"Vendor with code '{vendor_data.vendor_code}' already exists",
@@ -141,9 +129,7 @@ class VendorService:
             )
 
     @staticmethod
-    async def get_vendor(
-        db: AsyncSession, vendor_id: UUID, user_email: Optional[str] = None
-    ) -> VendorResponse:
+    async def get_vendor(db: AsyncSession, vendor_id: UUID, user_email: Optional[str] = None) -> VendorResponse:
         """
         Get vendor by ID.
 
@@ -199,7 +185,7 @@ class VendorService:
 
         # Update fields if provided
         update_data = vendor_data.model_dump(exclude_unset=True)
-        
+
         if not update_data:
             logger.warning(f"No fields to update for vendor {vendor_id}")
             return VendorResponse.model_validate(vendor)

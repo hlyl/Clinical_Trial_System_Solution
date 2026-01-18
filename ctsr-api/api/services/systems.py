@@ -39,9 +39,7 @@ class SystemService:
         if isinstance(value, list):
             return [SystemService._serialize_for_audit(v) for v in value]
         if isinstance(value, dict):
-            return {
-                k: SystemService._serialize_for_audit(v) for k, v in value.items()
-            }
+            return {k: SystemService._serialize_for_audit(v) for k, v in value.items()}
         return value
 
     @staticmethod
@@ -58,14 +56,8 @@ class SystemService:
             instance_id=instance_id,
             action=action,
             changed_by=changed_by,
-            old_values={
-                k: SystemService._serialize_for_audit(v) for k, v in (old_values or {}).items()
-            }
-            or None,
-            new_values={
-                k: SystemService._serialize_for_audit(v) for k, v in (new_values or {}).items()
-            }
-            or None,
+            old_values={k: SystemService._serialize_for_audit(v) for k, v in (old_values or {}).items()} or None,
+            new_values={k: SystemService._serialize_for_audit(v) for k, v in (new_values or {}).items()} or None,
         )
         db.add(record)
         await db.flush()
@@ -141,11 +133,7 @@ class SystemService:
         total = total_result.scalar() or 0
 
         # Apply pagination and ordering
-        query = (
-            query.order_by(SystemInstance.instance_code)
-            .limit(pagination.limit)
-            .offset(pagination.offset)
-        )
+        query = query.order_by(SystemInstance.instance_code).limit(pagination.limit).offset(pagination.offset)
 
         # Execute query
         result = await db.execute(query)
@@ -155,15 +143,11 @@ class SystemService:
 
         return SystemListResponse(
             data=[SystemResponse.model_validate(s) for s in systems],
-            meta=PaginationMeta(
-                total=total, limit=pagination.limit, offset=pagination.offset
-            ),
+            meta=PaginationMeta(total=total, limit=pagination.limit, offset=pagination.offset),
         )
 
     @staticmethod
-    async def create_system(
-        db: AsyncSession, system_data: SystemCreate, user_email: str
-    ) -> SystemResponse:
+    async def create_system(db: AsyncSession, system_data: SystemCreate, user_email: str) -> SystemResponse:
         """
         Create a new system instance.
 
@@ -183,9 +167,7 @@ class SystemService:
 
         # Check if instance_code already exists
         existing = await db.execute(
-            select(SystemInstance).where(
-                SystemInstance.instance_code == system_data.instance_code
-            )
+            select(SystemInstance).where(SystemInstance.instance_code == system_data.instance_code)
         )
         if existing.scalar_one_or_none():
             raise ConflictError(
@@ -253,9 +235,7 @@ class SystemService:
             )
 
     @staticmethod
-    async def get_system(
-        db: AsyncSession, instance_id: UUID, user_email: Optional[str] = None
-    ) -> SystemDetail:
+    async def get_system(db: AsyncSession, instance_id: UUID, user_email: Optional[str] = None) -> SystemDetail:
         """
         Get system by ID with linked trials and audit history.
 
@@ -273,9 +253,7 @@ class SystemService:
         logger.info(f"Getting system {instance_id} - user: {user_email}")
 
         # Get system instance
-        result = await db.execute(
-            select(SystemInstance).where(SystemInstance.instance_id == instance_id)
-        )
+        result = await db.execute(select(SystemInstance).where(SystemInstance.instance_id == instance_id))
         system = result.scalar_one_or_none()
 
         if not system:
@@ -343,9 +321,7 @@ class SystemService:
         logger.info(f"Updating system {instance_id} by user {user_email}")
 
         # Get existing system
-        result = await db.execute(
-            select(SystemInstance).where(SystemInstance.instance_id == instance_id)
-        )
+        result = await db.execute(select(SystemInstance).where(SystemInstance.instance_id == instance_id))
         system = result.scalar_one_or_none()
 
         if not system:
@@ -380,11 +356,7 @@ class SystemService:
 
             # Compute changed fields for audit trail
             new_snapshot = SystemResponse.model_validate(system).model_dump()
-            changed_keys = {
-                key
-                for key, new_value in new_snapshot.items()
-                if old_snapshot.get(key) != new_value
-            }
+            changed_keys = {key for key, new_value in new_snapshot.items() if old_snapshot.get(key) != new_value}
 
             if changed_keys:
                 await SystemService._record_audit(

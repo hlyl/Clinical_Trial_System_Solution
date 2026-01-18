@@ -39,7 +39,7 @@ async def list_confirmations(
 ):
     """
     List all confirmations with optional filters.
-    
+
     **Permissions:** VIEWER, TRIAL_LEAD, ADMIN
     """
     confirmations, meta = await ConfirmationService.list_confirmations(
@@ -66,7 +66,7 @@ async def create_confirmation(
 ):
     """
     Create a new confirmation for a trial.
-    
+
     **Permissions:** TRIAL_LEAD, ADMIN
     """
     return await ConfirmationService.create_confirmation(
@@ -82,12 +82,10 @@ async def get_confirmation(
 ):
     """
     Get confirmation details including system snapshots.
-    
+
     **Permissions:** VIEWER, TRIAL_LEAD, ADMIN
     """
-    return await ConfirmationService.get_confirmation(
-        db=db, confirmation_id=confirmation_id, user_email=user.email
-    )
+    return await ConfirmationService.get_confirmation(db=db, confirmation_id=confirmation_id, user_email=user.email)
 
 
 @router.put("/{confirmation_id}", response_model=ConfirmationResponse, status_code=status.HTTP_200_OK)
@@ -99,7 +97,7 @@ async def update_confirmation(
 ):
     """
     Update a confirmation (only pending confirmations can be updated).
-    
+
     **Permissions:** TRIAL_LEAD, ADMIN
     """
     return await ConfirmationService.update_confirmation(
@@ -123,7 +121,7 @@ async def submit_confirmation(
 ):
     """
     Submit a confirmation and optionally capture system snapshots.
-    
+
     **Permissions:** TRIAL_LEAD, ADMIN
     """
     return await ConfirmationService.submit_confirmation(
@@ -142,9 +140,7 @@ async def generate_export(
 ):
     """
     Generate an eTMF export for a completed confirmation.
-    
+
     **Permissions:** TRIAL_LEAD, ADMIN
     """
-    return await ConfirmationService.generate_export(
-        db=db, export_request=export_request, user_email=user.email
-    )
+    return await ConfirmationService.generate_export(db=db, export_request=export_request, user_email=user.email)

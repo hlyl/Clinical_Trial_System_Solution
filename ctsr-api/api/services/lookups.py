@@ -21,34 +21,28 @@ class LookupsService:
     async def get_all_lookups(db: AsyncSession) -> LookupsResponse:
         """
         Fetch all lookup tables for client-side caching.
-        
+
         Args:
             db: Database session
-            
+
         Returns:
             LookupsResponse: All reference data
         """
         # Fetch system categories
         result = await db.execute(
-            select(SystemCategory)
-            .where(SystemCategory.is_active == True)
-            .order_by(SystemCategory.sort_order)
+            select(SystemCategory).where(SystemCategory.is_active == True).order_by(SystemCategory.sort_order)
         )
         categories = result.scalars().all()
 
         # Fetch validation statuses
         result = await db.execute(
-            select(ValidationStatus)
-            .where(ValidationStatus.is_active == True)
-            .order_by(ValidationStatus.sort_order)
+            select(ValidationStatus).where(ValidationStatus.is_active == True).order_by(ValidationStatus.sort_order)
         )
         statuses = result.scalars().all()
 
         # Fetch criticality levels
         result = await db.execute(
-            select(Criticality)
-            .where(Criticality.is_active == True)
-            .order_by(Criticality.sort_order)
+            select(Criticality).where(Criticality.is_active == True).order_by(Criticality.sort_order)
         )
         criticalities = result.scalars().all()
 
@@ -85,15 +79,9 @@ class LookupsService:
         ]
 
         return LookupsResponse(
-            system_categories=[
-                SystemCategoryResponse.model_validate(cat) for cat in categories
-            ],
-            validation_statuses=[
-                ValidationStatusResponse.model_validate(status) for status in statuses
-            ],
-            criticality_levels=[
-                CriticalityResponse.model_validate(crit) for crit in criticalities
-            ],
+            system_categories=[SystemCategoryResponse.model_validate(cat) for cat in categories],
+            validation_statuses=[ValidationStatusResponse.model_validate(status) for status in statuses],
+            criticality_levels=[CriticalityResponse.model_validate(crit) for crit in criticalities],
             vendor_types=vendor_types,
             hosting_models=hosting_models,
             data_hosting_regions=data_hosting_regions,

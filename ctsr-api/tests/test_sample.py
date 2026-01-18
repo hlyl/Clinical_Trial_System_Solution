@@ -327,7 +327,7 @@ def sample_vendor():
         "vendor_name": "Fixture Vendor",
         "vendor_type": "CRO",
         "contact_name": "Test Contact",
-        "contact_email": "test@example.com"
+        "contact_email": "test@example.com",
     }
 
 
@@ -338,15 +338,11 @@ def sample_system():
         "instance_code": "SYS-FIXTURE",
         "platform_name": "Test Platform",
         "category_code": "EDC",
-        "validation_status_code": "PENDING"
+        "validation_status_code": "PENDING",
     }
 
 
 @pytest.fixture
 def sample_trial():
     """Fixture providing sample trial data."""
-    return {
-        "protocol_number": "PROTO-FIXTURE",
-        "trial_title": "Test Trial",
-        "trial_status": "PLANNED"
-    }
+    return {"protocol_number": "PROTO-FIXTURE", "trial_title": "Test Trial", "trial_status": "PLANNED"}

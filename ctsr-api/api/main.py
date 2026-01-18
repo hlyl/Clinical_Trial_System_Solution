@@ -28,9 +28,9 @@ async def lifespan(app: FastAPI) -> AsyncGenerator:
     logger.info("Starting CTSR API...")
     init_db()
     logger.info("Database initialized")
-    
+
     yield
-    
+
     # Shutdown
     logger.info("Shutting down CTSR API...")
     await close_db()

@@ -21,10 +21,10 @@ router = APIRouter()
 async def get_lookups(db: AsyncSession = Depends(get_db)) -> LookupsResponse:
     """
     Fetch all reference/lookup data.
-    
+
     This endpoint returns all lookup tables in a single response for efficient
     client-side caching. No authentication required.
-    
+
     Returns:
         LookupsResponse: All reference data
     """

@@ -67,9 +67,9 @@ def render_browse_tab():
 
     df = pd.DataFrame(confirmations)
     # Show plain text status instead of HTML badge to avoid raw markup in table
-    df["Status"] = df.get("confirmation_status", "")
-    df["Type"] = df.get("confirmation_type", "")
-    df["Created"] = df.get("created_at", "").apply(format_date)
+    df["Status"] = df["confirmation_status"] if "confirmation_status" in df.columns else ""
+    df["Type"] = df["confirmation_type"] if "confirmation_type" in df.columns else ""
+    df["Created"] = df["created_at"].apply(format_date) if "created_at" in df.columns else ""
 
     display_df = df[["confirmation_id", "confirmation_type", "Status", "Created"]].copy()
     display_df.columns = ["ID", "Type", "Status", "Created"]

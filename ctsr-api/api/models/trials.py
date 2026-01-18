@@ -66,7 +66,9 @@ class SystemLinkCreate(BaseModel):
 
     instance_id: UUID = Field(..., description="System instance UUID")
     criticality_code: str = Field(..., description="Criticality level (HIGH/MEDIUM/LOW)")
-    criticality_override_reason: Optional[str] = Field(None, max_length=500, description="Reason for criticality override")
+    criticality_override_reason: Optional[str] = Field(
+        None, max_length=500, description="Reason for criticality override"
+    )
     usage_start_date: Optional[date] = Field(None, description="Usage start date")
     usage_end_date: Optional[date] = Field(None, description="Usage end date")
 

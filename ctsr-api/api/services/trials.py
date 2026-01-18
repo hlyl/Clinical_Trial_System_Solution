@@ -42,8 +42,7 @@ class TrialService:
     ) -> tuple[List[Trial], PaginationMeta]:
         """List trials with optional filters."""
         logger.info(
-            f"Listing trials - user: {user_email}, search: {search}, "
-            f"status: {trial_status}, phase: {trial_phase}"
+            f"Listing trials - user: {user_email}, search: {search}, " f"status: {trial_status}, phase: {trial_phase}"
         )
 
         # Build base query
@@ -85,26 +84,18 @@ class TrialService:
 
         logger.info(f"Found {total} trials, returning {len(trials)} items")
 
-        return list(trials), PaginationMeta(
-            total=total, limit=pagination.limit, offset=pagination.offset
-        )
+        return list(trials), PaginationMeta(total=total, limit=pagination.limit, offset=pagination.offset)
 
     @staticmethod
-    async def create_trial(
-        db: AsyncSession, trial_data: TrialCreate, user_email: str
-    ) -> TrialResponse:
+    async def create_trial(db: AsyncSession, trial_data: TrialCreate, user_email: str) -> TrialResponse:
         """Create a new trial."""
         logger.info(f"Creating trial: {trial_data.protocol_number} by {user_email}")
 
         # Check for duplicate protocol number
-        existing_query = select(Trial).where(
-            Trial.protocol_number == trial_data.protocol_number
-        )
+        existing_query = select(Trial).where(Trial.protocol_number == trial_data.protocol_number)
         existing_result = await db.execute(existing_query)
         if existing_result.scalar_one_or_none():
-            raise ConflictError(
-                f"Trial with protocol '{trial_data.protocol_number}' already exists"
-            )
+            raise ConflictError(f"Trial with protocol '{trial_data.protocol_number}' already exists")
 
         # Create trial
         trial = Trial(**trial_data.model_dump())
@@ -199,9 +190,7 @@ class TrialService:
         return TrialDetail(**trial_dict)
 
     @staticmethod
-    async def update_trial(
-        db: AsyncSession, trial_id: UUID, trial_data: TrialUpdate, user_email: str
-    ) -> TrialResponse:
+    async def update_trial(db: AsyncSession, trial_id: UUID, trial_data: TrialUpdate, user_email: str) -> TrialResponse:
         """Update a trial."""
         logger.info(f"Updating trial {trial_id} by {user_email}")
 
@@ -238,9 +227,7 @@ class TrialService:
         user_email: str,
     ) -> SystemLinkResponse:
         """Link a system to a trial."""
-        logger.info(
-            f"Linking system {link_data.instance_id} to trial {trial_id} by {user_email}"
-        )
+        logger.info(f"Linking system {link_data.instance_id} to trial {trial_id} by {user_email}")
 
         # Verify trial exists
         trial_query = select(Trial).where(Trial.trial_id == trial_id)
@@ -249,9 +236,7 @@ class TrialService:
             raise NotFoundError("Trial", trial_id)
 
         # Verify system exists
-        system_query = select(SystemInstance).where(
-            SystemInstance.instance_id == link_data.instance_id
-        )
+        system_query = select(SystemInstance).where(SystemInstance.instance_id == link_data.instance_id)
         system_result = await db.execute(system_query)
         if not system_result.scalar_one_or_none():
             raise NotFoundError("System", link_data.instance_id)
@@ -266,9 +251,7 @@ class TrialService:
         )
         existing_result = await db.execute(existing_link_query)
         if existing_result.scalar_one_or_none():
-            raise ConflictError(
-                f"System {link_data.instance_id} is already linked to trial {trial_id}"
-            )
+            raise ConflictError(f"System {link_data.instance_id} is already linked to trial {trial_id}")
 
         # Create link
         link = TrialSystemLink(
@@ -301,9 +284,7 @@ class TrialService:
         user_email: str,
     ) -> SystemLinkResponse:
         """Update a trial-system link."""
-        logger.info(
-            f"Updating link for system {instance_id} in trial {trial_id} by {user_email}"
-        )
+        logger.info(f"Updating link for system {instance_id} in trial {trial_id} by {user_email}")
 
         # Get link
         link_query = select(TrialSystemLink).where(
@@ -317,10 +298,7 @@ class TrialService:
         link = link_result.scalar_one_or_none()
 
         if not link:
-            raise NotFoundError(
-                "Active link",
-                f"system {instance_id} in trial {trial_id}"
-            )
+            raise NotFoundError("Active link", f"system {instance_id} in trial {trial_id}")
 
         # Update fields
         update_data = link_data.model_dump(exclude_unset=True)
@@ -340,13 +318,9 @@ class TrialService:
             raise ConflictError("Failed to update link due to constraint violation")
 
     @staticmethod
-    async def unlink_system(
-        db: AsyncSession, trial_id: UUID, instance_id: UUID, user_email: str
-    ) -> None:
+    async def unlink_system(db: AsyncSession, trial_id: UUID, instance_id: UUID, user_email: str) -> None:
         """Unlink a system from a trial (soft delete)."""
-        logger.info(
-            f"Unlinking system {instance_id} from trial {trial_id} by {user_email}"
-        )
+        logger.info(f"Unlinking system {instance_id} from trial {trial_id} by {user_email}")
 
         # Get link
         link_query = select(TrialSystemLink).where(
@@ -360,10 +334,7 @@ class TrialService:
         link = link_result.scalar_one_or_none()
 
         if not link:
-            raise NotFoundError(
-                "Active link",
-                f"system {instance_id} in trial {trial_id}"
-            )
+            raise NotFoundError("Active link", f"system {instance_id} in trial {trial_id}")
 
         # Soft delete
         link.unlinked_by = user_email

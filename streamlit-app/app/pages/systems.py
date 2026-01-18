@@ -65,9 +65,9 @@ def render_browse_tab():
         return
 
     df = pd.DataFrame(systems)
-    df["Category"] = df.get("category_code", "")
-    df["Validation"] = df.get("validation_status_code", "")
-    df["Created"] = df.get("created_at", "").apply(format_date)
+    df["Category"] = df["category_code"] if "category_code" in df.columns else ""
+    df["Validation"] = df["validation_status_code"] if "validation_status_code" in df.columns else ""
+    df["Created"] = df["created_at"].apply(format_date) if "created_at" in df.columns else ""
 
     display_df = df[["instance_code", "platform_name", "Category", "Validation", "Created"]].copy()
     display_df.columns = ["Code", "Platform", "Category", "Status", "Created"]

@@ -86,9 +86,7 @@ async def create_vendor(
         409 Conflict: If vendor_code already exists
         400 Bad Request: If validation fails
     """
-    return await VendorService.create_vendor(
-        db=db, vendor_data=vendor_data, user_email=user.email
-    )
+    return await VendorService.create_vendor(db=db, vendor_data=vendor_data, user_email=user.email)
 
 
 @router.get(
@@ -118,9 +116,7 @@ async def get_vendor(
     Raises:
         404 Not Found: If vendor doesn't exist
     """
-    return await VendorService.get_vendor(
-        db=db, vendor_id=vendor_id, user_email=user.email
-    )
+    return await VendorService.get_vendor(db=db, vendor_id=vendor_id, user_email=user.email)
 
 
 @router.put(
@@ -153,6 +149,4 @@ async def update_vendor(
         404 Not Found: If vendor doesn't exist
         400 Bad Request: If validation fails
     """
-    return await VendorService.update_vendor(
-        db=db, vendor_id=vendor_id, vendor_data=vendor_data, user_email=user.email
-    )
+    return await VendorService.update_vendor(db=db, vendor_id=vendor_id, vendor_data=vendor_data, user_email=user.email)

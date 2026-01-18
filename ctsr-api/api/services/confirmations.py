@@ -78,18 +78,14 @@ class ConfirmationService:
 
         logger.info(f"Found {total} confirmations, returning {len(confirmations)} items")
 
-        return list(confirmations), PaginationMeta(
-            total=total, limit=pagination.limit, offset=pagination.offset
-        )
+        return list(confirmations), PaginationMeta(total=total, limit=pagination.limit, offset=pagination.offset)
 
     @staticmethod
     async def create_confirmation(
         db: AsyncSession, confirmation_data: ConfirmationCreate, user_email: str
     ) -> ConfirmationResponse:
         """Create a new confirmation."""
-        logger.info(
-            f"Creating confirmation for trial {confirmation_data.trial_id} by {user_email}"
-        )
+        logger.info(f"Creating confirmation for trial {confirmation_data.trial_id} by {user_email}")
 
         # Verify trial exists
         trial_query = select(Trial).where(Trial.trial_id == confirmation_data.trial_id)
@@ -132,9 +128,7 @@ class ConfirmationService:
             raise ConflictError("Failed to create confirmation due to constraint violation")
 
     @staticmethod
-    async def get_confirmation(
-        db: AsyncSession, confirmation_id: UUID, user_email: str
-    ) -> ConfirmationDetail:
+    async def get_confirmation(db: AsyncSession, confirmation_id: UUID, user_email: str) -> ConfirmationDetail:
         """Get confirmation details with snapshots."""
         logger.info(f"Fetching confirmation {confirmation_id} for user {user_email}")
 
@@ -217,9 +211,7 @@ class ConfirmationService:
         logger.info(f"Updating confirmation {confirmation_id} by {user_email}")
 
         # Get confirmation
-        confirmation_query = select(Confirmation).where(
-            Confirmation.confirmation_id == confirmation_id
-        )
+        confirmation_query = select(Confirmation).where(Confirmation.confirmation_id == confirmation_id)
         confirmation_result = await db.execute(confirmation_query)
         confirmation = confirmation_result.scalar_one_or_none()
 
@@ -259,9 +251,7 @@ class ConfirmationService:
         )
 
         # Get confirmation
-        confirmation_query = select(Confirmation).where(
-            Confirmation.confirmation_id == confirmation_id
-        )
+        confirmation_query = select(Confirmation).where(Confirmation.confirmation_id == confirmation_id)
         confirmation_result = await db.execute(confirmation_query)
         confirmation = confirmation_result.scalar_one_or_none()
 
@@ -274,9 +264,7 @@ class ConfirmationService:
 
         # Capture snapshots if requested
         if submit_data.capture_snapshots:
-            await ConfirmationService._capture_snapshots(
-                db, confirmation.trial_id, confirmation_id
-            )
+            await ConfirmationService._capture_snapshots(db, confirmation.trial_id, confirmation_id)
 
         # Update confirmation
         confirmation.confirmation_status = "COMPLETED"
@@ -284,9 +272,7 @@ class ConfirmationService:
         confirmation.confirmed_by = user_email
         if submit_data.notes:
             confirmation.notes = (
-                f"{confirmation.notes}\n{submit_data.notes}"
-                if confirmation.notes
-                else submit_data.notes
+                f"{confirmation.notes}\n{submit_data.notes}" if confirmation.notes else submit_data.notes
             )
 
         # Count validation alerts
@@ -312,8 +298,7 @@ class ConfirmationService:
             await db.commit()
             await db.refresh(confirmation)
             logger.info(
-                f"Confirmation submitted: {confirmation_id}, "
-                f"alerts: {confirmation.validation_alerts_count}"
+                f"Confirmation submitted: {confirmation_id}, " f"alerts: {confirmation.validation_alerts_count}"
             )
             return ConfirmationResponse.model_validate(confirmation)
         except IntegrityError as e:
@@ -322,9 +307,7 @@ class ConfirmationService:
             raise ConflictError("Failed to submit confirmation due to constraint violation")
 
     @staticmethod
-    async def _capture_snapshots(
-        db: AsyncSession, trial_id: UUID, confirmation_id: UUID
-    ) -> None:
+    async def _capture_snapshots(db: AsyncSession, trial_id: UUID, confirmation_id: UUID) -> None:
         """Capture point-in-time snapshots of trial systems."""
         logger.info(f"Capturing snapshots for trial {trial_id}, confirmation {confirmation_id}")
 
@@ -373,9 +356,7 @@ class ConfirmationService:
         logger.info(f"Created {len(links_data)} snapshots")
 
     @staticmethod
-    async def generate_export(
-        db: AsyncSession, export_request: ExportRequest, user_email: str
-    ) -> ExportResponse:
+    async def generate_export(db: AsyncSession, export_request: ExportRequest, user_email: str) -> ExportResponse:
         """Generate an eTMF export for a confirmation."""
         logger.info(
             f"Generating {export_request.export_format} export for confirmation "
@@ -383,9 +364,7 @@ class ConfirmationService:
         )
 
         # Get confirmation
-        confirmation_query = select(Confirmation).where(
-            Confirmation.confirmation_id == export_request.confirmation_id
-        )
+        confirmation_query = select(Confirmation).where(Confirmation.confirmation_id == export_request.confirmation_id)
         confirmation_result = await db.execute(confirmation_query)
         confirmation = confirmation_result.scalar_one_or_none()
 
@@ -399,7 +378,7 @@ class ConfirmationService:
         # Generate export (simulated for now - in production would generate actual file)
         export_id = uuid4()
         file_name = f"confirmation_{confirmation.confirmation_id}_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}.{export_request.export_format.lower()}"
-        
+
         # Update confirmation with export info
         confirmation.export_generated = True
         confirmation.export_id = export_id

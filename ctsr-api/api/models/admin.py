@@ -11,6 +11,7 @@ from pydantic import BaseModel, Field
 
 class TrialSummary(BaseModel):
     """Summary statistics for trials."""
+
     total_trials: int = Field(..., description="Total number of trials")
     active_trials: int = Field(..., description="Trials with active systems")
     trials_with_alerts: int = Field(..., description="Trials with validation alerts")
@@ -18,6 +19,7 @@ class TrialSummary(BaseModel):
 
 class SystemSummary(BaseModel):
     """Summary statistics for systems."""
+
     total_systems: int = Field(..., description="Total system instances")
     active_systems: int = Field(..., description="Active system instances")
     validated_systems: int = Field(..., description="Systems with VALIDATED status")
@@ -27,6 +29,7 @@ class SystemSummary(BaseModel):
 
 class ConfirmationSummary(BaseModel):
     """Summary statistics for confirmations."""
+
     total_confirmations: int = Field(..., description="Total confirmations")
     pending_confirmations: int = Field(..., description="Pending confirmations")
     overdue_confirmations: int = Field(..., description="Overdue confirmations")
@@ -35,6 +38,7 @@ class ConfirmationSummary(BaseModel):
 
 class ValidationAlertSummary(BaseModel):
     """Summary statistics for validation alerts."""
+
     total_alerts: int = Field(..., description="Total validation alerts")
     open_alerts: int = Field(..., description="Open validation alerts")
     critical_alerts: int = Field(..., description="Critical severity alerts")
@@ -43,7 +47,10 @@ class ValidationAlertSummary(BaseModel):
 
 class RecentActivity(BaseModel):
     """Recent activity item."""
-    activity_type: str = Field(..., description="Type of activity (TRIAL_CREATED, SYSTEM_ADDED, CONFIRMATION_SUBMITTED, etc)")
+
+    activity_type: str = Field(
+        ..., description="Type of activity (TRIAL_CREATED, SYSTEM_ADDED, CONFIRMATION_SUBMITTED, etc)"
+    )
     entity_id: str = Field(..., description="ID of the entity")
     entity_name: str = Field(..., description="Name or description of entity")
     performed_by: str = Field(..., description="User who performed the action")
@@ -53,6 +60,7 @@ class RecentActivity(BaseModel):
 
 class DashboardStats(BaseModel):
     """Comprehensive dashboard statistics."""
+
     trials: TrialSummary
     systems: SystemSummary
     confirmations: ConfirmationSummary

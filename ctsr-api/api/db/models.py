@@ -21,7 +21,6 @@ from sqlalchemy.sql import func
 
 from api.db.base import Base
 
-
 # =============================================================================
 # Lookup Tables
 # =============================================================================
@@ -83,9 +82,7 @@ class Vendor(Base):
         {"schema": "ctsr"},
     )
 
-    vendor_id: Mapped[UUID] = mapped_column(
-        PGUUID(as_uuid=True), primary_key=True, default=uuid4
-    )
+    vendor_id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=uuid4)
     vendor_code: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
     vendor_name: Mapped[str] = mapped_column(String(200), nullable=False)
     vendor_type: Mapped[str] = mapped_column(
@@ -101,12 +98,8 @@ class Vendor(Base):
     contact_name: Mapped[Optional[str]] = mapped_column(String(200))
     contact_email: Mapped[Optional[str]] = mapped_column(String(200))
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
-    created_at: Mapped[datetime] = mapped_column(
-        nullable=False, server_default=func.now()
-    )
-    updated_at: Mapped[datetime] = mapped_column(
-        nullable=False, server_default=func.now(), onupdate=func.now()
-    )
+    created_at: Mapped[datetime] = mapped_column(nullable=False, server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(nullable=False, server_default=func.now(), onupdate=func.now())
     created_by: Mapped[Optional[str]] = mapped_column(String(200))
     updated_by: Mapped[Optional[str]] = mapped_column(String(200))
 
@@ -137,9 +130,7 @@ class SystemInstance(Base):
         {"schema": "ctsr"},
     )
 
-    instance_id: Mapped[UUID] = mapped_column(
-        PGUUID(as_uuid=True), primary_key=True, default=uuid4
-    )
+    instance_id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=uuid4)
     instance_code: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
     platform_vendor_id: Mapped[Optional[UUID]] = mapped_column(PGUUID(as_uuid=True))
     service_provider_id: Mapped[Optional[UUID]] = mapped_column(PGUUID(as_uuid=True))
@@ -147,9 +138,7 @@ class SystemInstance(Base):
     platform_name: Mapped[str] = mapped_column(String(200), nullable=False)
     platform_version: Mapped[Optional[str]] = mapped_column(String(50))
     instance_name: Mapped[Optional[str]] = mapped_column(String(200))
-    instance_environment: Mapped[str] = mapped_column(
-        String(20), default="PRODUCTION"
-    )
+    instance_environment: Mapped[str] = mapped_column(String(20), default="PRODUCTION")
     validation_status_code: Mapped[str] = mapped_column(String(20), nullable=False)
     validation_date: Mapped[Optional[date]] = mapped_column(Date)
     validation_expiry: Mapped[Optional[date]] = mapped_column(Date)
@@ -168,12 +157,8 @@ class SystemInstance(Base):
     next_planned_change_date: Mapped[Optional[date]] = mapped_column(Date)
     next_planned_change_desc: Mapped[Optional[str]] = mapped_column(String(500))
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
-    created_at: Mapped[datetime] = mapped_column(
-        nullable=False, server_default=func.now()
-    )
-    updated_at: Mapped[datetime] = mapped_column(
-        nullable=False, server_default=func.now(), onupdate=func.now()
-    )
+    created_at: Mapped[datetime] = mapped_column(nullable=False, server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(nullable=False, server_default=func.now(), onupdate=func.now())
     created_by: Mapped[Optional[str]] = mapped_column(String(200))
     updated_by: Mapped[Optional[str]] = mapped_column(String(200))
 
@@ -194,9 +179,7 @@ class Trial(Base):
         {"schema": "ctsr"},
     )
 
-    trial_id: Mapped[UUID] = mapped_column(
-        PGUUID(as_uuid=True), primary_key=True, default=uuid4
-    )
+    trial_id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=uuid4)
     protocol_number: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
     trial_title: Mapped[str] = mapped_column(String(500), nullable=False)
     trial_phase: Mapped[Optional[str]] = mapped_column(String(20))
@@ -212,12 +195,8 @@ class Trial(Base):
     ctms_trial_id: Mapped[Optional[str]] = mapped_column(String(100))
     last_ctms_sync: Mapped[Optional[datetime]] = mapped_column()
     next_confirmation_due: Mapped[Optional[date]] = mapped_column(Date)
-    created_at: Mapped[datetime] = mapped_column(
-        nullable=False, server_default=func.now()
-    )
-    updated_at: Mapped[datetime] = mapped_column(
-        nullable=False, server_default=func.now(), onupdate=func.now()
-    )
+    created_at: Mapped[datetime] = mapped_column(nullable=False, server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(nullable=False, server_default=func.now(), onupdate=func.now())
 
 
 class TrialSystemLink(Base):
@@ -238,32 +217,20 @@ class TrialSystemLink(Base):
         {"schema": "ctsr"},
     )
 
-    link_id: Mapped[UUID] = mapped_column(
-        PGUUID(as_uuid=True), primary_key=True, default=uuid4
-    )
+    link_id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=uuid4)
     trial_id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), nullable=False)
     instance_id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), nullable=False)
-    assignment_status: Mapped[str] = mapped_column(
-        String(30), nullable=False, default="ACTIVE"
-    )
+    assignment_status: Mapped[str] = mapped_column(String(30), nullable=False, default="ACTIVE")
     criticality_code: Mapped[str] = mapped_column(String(10), nullable=False)
     criticality_override_reason: Mapped[Optional[str]] = mapped_column(String(500))
-    usage_start_date: Mapped[date] = mapped_column(
-        Date, nullable=False, server_default=text("CURRENT_DATE")
-    )
+    usage_start_date: Mapped[date] = mapped_column(Date, nullable=False, server_default=text("CURRENT_DATE"))
     usage_end_date: Mapped[Optional[date]] = mapped_column(Date)
     linked_by: Mapped[Optional[str]] = mapped_column(String(200))
-    linked_at: Mapped[datetime] = mapped_column(
-        nullable=False, server_default=func.now()
-    )
+    linked_at: Mapped[datetime] = mapped_column(nullable=False, server_default=func.now())
     unlinked_by: Mapped[Optional[str]] = mapped_column(String(200))
     unlinked_at: Mapped[Optional[datetime]] = mapped_column()
-    created_at: Mapped[datetime] = mapped_column(
-        nullable=False, server_default=func.now()
-    )
-    updated_at: Mapped[datetime] = mapped_column(
-        nullable=False, server_default=func.now(), onupdate=func.now()
-    )
+    created_at: Mapped[datetime] = mapped_column(nullable=False, server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(nullable=False, server_default=func.now(), onupdate=func.now())
 
 
 class Confirmation(Base):
@@ -281,14 +248,10 @@ class Confirmation(Base):
         {"schema": "ctsr"},
     )
 
-    confirmation_id: Mapped[UUID] = mapped_column(
-        PGUUID(as_uuid=True), primary_key=True, default=uuid4
-    )
+    confirmation_id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=uuid4)
     trial_id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), nullable=False)
     confirmation_type: Mapped[str] = mapped_column(String(20), nullable=False)
-    confirmation_status: Mapped[str] = mapped_column(
-        String(20), nullable=False, default="PENDING"
-    )
+    confirmation_status: Mapped[str] = mapped_column(String(20), nullable=False, default="PENDING")
     due_date: Mapped[Optional[date]] = mapped_column(Date)
     confirmed_date: Mapped[Optional[date]] = mapped_column(Date)
     confirmed_by: Mapped[Optional[str]] = mapped_column(String(200))
@@ -297,9 +260,7 @@ class Confirmation(Base):
     validation_alerts_count: Mapped[Optional[int]] = mapped_column(Integer)
     export_generated: Mapped[bool] = mapped_column(Boolean, default=False)
     export_id: Mapped[Optional[UUID]] = mapped_column(PGUUID(as_uuid=True))
-    created_at: Mapped[datetime] = mapped_column(
-        nullable=False, server_default=func.now()
-    )
+    created_at: Mapped[datetime] = mapped_column(nullable=False, server_default=func.now())
 
 
 class LinkSnapshot(Base):
@@ -312,20 +273,14 @@ class LinkSnapshot(Base):
         {"schema": "ctsr"},
     )
 
-    snapshot_id: Mapped[UUID] = mapped_column(
-        PGUUID(as_uuid=True), primary_key=True, default=uuid4
-    )
-    confirmation_id: Mapped[UUID] = mapped_column(
-        PGUUID(as_uuid=True), nullable=False
-    )
+    snapshot_id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=uuid4)
+    confirmation_id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), nullable=False)
     link_id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), nullable=False)
     instance_id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), nullable=False)
     instance_state: Mapped[dict] = mapped_column(JSONB, nullable=False)
     validation_status_at: Mapped[Optional[str]] = mapped_column(String(20))
     platform_version_at: Mapped[Optional[str]] = mapped_column(String(50))
-    created_at: Mapped[datetime] = mapped_column(
-        nullable=False, server_default=func.now()
-    )
+    created_at: Mapped[datetime] = mapped_column(nullable=False, server_default=func.now())
 
 
 class UploadLog(Base):
@@ -339,16 +294,12 @@ class UploadLog(Base):
         {"schema": "ctsr"},
     )
 
-    upload_id: Mapped[UUID] = mapped_column(
-        PGUUID(as_uuid=True), primary_key=True, default=uuid4
-    )
+    upload_id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=uuid4)
     vendor_code: Mapped[str] = mapped_column(String(50), nullable=False)
     upload_type: Mapped[str] = mapped_column(String(20), nullable=False)
     file_name: Mapped[Optional[str]] = mapped_column(String(500))
     file_size_bytes: Mapped[Optional[int]] = mapped_column(Integer)
-    processing_status: Mapped[str] = mapped_column(
-        String(20), nullable=False, default="PENDING"
-    )
+    processing_status: Mapped[str] = mapped_column(String(20), nullable=False, default="PENDING")
     raw_json: Mapped[Optional[dict]] = mapped_column(JSONB)
     schema_version: Mapped[Optional[str]] = mapped_column(String(10))
     instances_in_file: Mapped[Optional[int]] = mapped_column(Integer)
@@ -359,9 +310,7 @@ class UploadLog(Base):
     processing_started_at: Mapped[Optional[datetime]] = mapped_column()
     processing_completed_at: Mapped[Optional[datetime]] = mapped_column()
     error_message: Mapped[Optional[str]] = mapped_column(Text)
-    created_at: Mapped[datetime] = mapped_column(
-        nullable=False, server_default=func.now()
-    )
+    created_at: Mapped[datetime] = mapped_column(nullable=False, server_default=func.now())
 
 
 class SystemInstanceAudit(Base):
@@ -374,14 +323,10 @@ class SystemInstanceAudit(Base):
         {"schema": "ctsr"},
     )
 
-    audit_id: Mapped[UUID] = mapped_column(
-        PGUUID(as_uuid=True), primary_key=True, default=uuid4
-    )
+    audit_id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=uuid4)
     instance_id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), nullable=False)
     action: Mapped[str] = mapped_column(String(10), nullable=False)
-    changed_at: Mapped[datetime] = mapped_column(
-        nullable=False, server_default=func.now()
-    )
+    changed_at: Mapped[datetime] = mapped_column(nullable=False, server_default=func.now())
     changed_by: Mapped[Optional[str]] = mapped_column(String(200))
     old_values: Mapped[Optional[dict]] = mapped_column(JSONB)
     new_values: Mapped[Optional[dict]] = mapped_column(JSONB)
