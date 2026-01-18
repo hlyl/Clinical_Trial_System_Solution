@@ -3,7 +3,7 @@
 base = "light"
 
 # Primary accent color (buttons, highlights, interactive elements)
-primaryColor = "#0066a1"   # Replace with Novo Nordisk blue
+primaryColor = "#0066a1"
 
 # Main background
 backgroundColor = "#ffffff"
@@ -16,8 +16,3 @@ textColor = "#262730"
 
 # Font family
 font = "sans serif"
-
-[theme.sidebar]
-backgroundColor = "#003366"
-textColor = "#ffffff"
-primaryColor = "#0099cc"
