@@ -77,9 +77,11 @@ jobs:
         cd ctsr-api
         python << 'EOF'
         import asyncio
-        from sqlalchemy.ext.asyncio import create_async_engine
+        from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+        from sqlalchemy.orm import sessionmaker
+        from sqlalchemy import text
         from api.db.base import Base
-        from api.db.models import *  # Import all models
+        from api.db.models import SystemCategory, ValidationStatus, Criticality
         from api.config import get_settings
 
         async def init_db():
@@ -91,10 +93,42 @@ jobs:
                 await conn.execute(text("CREATE SCHEMA IF NOT EXISTS ctsr"))
                 await conn.run_sync(Base.metadata.create_all)
 
-            await engine.dispose()
-            print("Database initialized successfully!")
+            # Seed lookup tables
+            async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+            async with async_session() as session:
+                # Add system categories
+                categories = [
+                    SystemCategory(category_code="EDC", category_name="Electronic Data Capture", sort_order=1),
+                    SystemCategory(category_code="CTMS", category_name="Clinical Trial Management", sort_order=2),
+                    SystemCategory(category_code="LMS", category_name="Learning Management System", sort_order=3),
+                    SystemCategory(category_code="EHR", category_name="Electronic Health Records", sort_order=4),
+                ]
+                for cat in categories:
+                    session.add(cat)
 
-        from sqlalchemy import text
+                # Add validation statuses
+                statuses = [
+                    ValidationStatus(status_code="VALIDATED", status_name="Validated", sort_order=1),
+                    ValidationStatus(status_code="PENDING", status_name="Pending Validation", sort_order=2),
+                    ValidationStatus(status_code="FAILED", status_name="Validation Failed", sort_order=3),
+                ]
+                for status in statuses:
+                    session.add(status)
+
+                # Add criticality levels
+                criticalities = [
+                    Criticality(criticality_code="CRIT", criticality_name="Critical", sort_order=1),
+                    Criticality(criticality_code="MAJ", criticality_name="Major", sort_order=2),
+                    Criticality(criticality_code="STD", criticality_name="Standard", sort_order=3),
+                ]
+                for crit in criticalities:
+                    session.add(crit)
+
+                await session.commit()
+
+            await engine.dispose()
+            print("Database initialized and seeded successfully!")
+
         asyncio.run(init_db())
         EOF
       env:
