@@ -72,11 +72,34 @@ jobs:
     - name: Initialize database
       run: |
         cd ctsr-api
-        export DATABASE_URL="postgresql+asyncpg://ctsr_user:ctsr_password@localhost:5432/ctsr_db"
-        python -c "from api.db.database import init_db; import asyncio; asyncio.run(init_db())"
+        python << 'EOF'
+        import asyncio
+        from sqlalchemy.ext.asyncio import create_async_engine
+        from api.db.base import Base
+        from api.db.models import *  # Import all models
+        from api.config import get_settings
+
+        async def init_db():
+            settings = get_settings()
+            engine = create_async_engine(settings.database_url, echo=True)
+
+            # Create schema if it doesn't exist
+            async with engine.begin() as conn:
+                await conn.execute(text("CREATE SCHEMA IF NOT EXISTS ctsr"))
+                await conn.run_sync(Base.metadata.create_all)
+
+            await engine.dispose()
+            print("Database initialized successfully!")
+
+        from sqlalchemy import text
+        asyncio.run(init_db())
+        EOF
       env:
-        DATABASE_URL: postgresql+asyncpg://ctsr_user:ctsr_password@localhost:5432/ctsr_db
-      continue-on-error: true
+        POSTGRES_HOST: localhost
+        POSTGRES_PORT: 5432
+        POSTGRES_DB: ctsr_db
+        POSTGRES_USER: ctsr_user
+        POSTGRES_PASSWORD: ctsr_password
 
     - name: Install frontend dependencies
       run: |
