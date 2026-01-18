@@ -103,6 +103,21 @@ async def update_trial(
     return await TrialService.update_trial(db=db, trial_id=trial_id, trial_data=trial_data, user_email=user.email)
 
 
+@router.get("/{trial_id}/systems", status_code=status.HTTP_200_OK)
+async def get_trial_systems(
+    trial_id: UUID,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(require_role(UserRole.VIEWER)),
+):
+    """
+    Get all systems linked to a trial.
+
+    **Permissions:** VIEWER, TRIAL_LEAD, ADMIN
+    """
+    trial = await TrialService.get_trial(db=db, trial_id=trial_id, user_email=user.email)
+    return {"data": trial.linked_systems}
+
+
 @router.post(
     "/{trial_id}/systems",
     response_model=SystemLinkResponse,
