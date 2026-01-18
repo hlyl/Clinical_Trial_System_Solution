@@ -6,6 +6,9 @@ Business logic for admin dashboard statistics and aggregations.
 
 from datetime import datetime, timedelta
 
+from sqlalchemy import and_, case, func, or_, select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from api.db.models import Confirmation, SystemInstance, Trial, TrialSystemLink, ValidationStatus
 from api.models.admin import (
     ConfirmationSummary,
@@ -15,8 +18,6 @@ from api.models.admin import (
     TrialSummary,
     ValidationAlertSummary,
 )
-from sqlalchemy import and_, case, func, or_, select
-from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class AdminService:

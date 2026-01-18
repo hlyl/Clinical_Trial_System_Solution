@@ -4,13 +4,14 @@ import logging
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
+from fastapi import FastAPI, Request, status
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+
 from api import __version__
 from api.config import get_settings
 from api.db import close_db, init_db
 from api.exceptions import CTSRException
-from fastapi import FastAPI, Request, status
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
 
 # Configure logging
 logging.basicConfig(

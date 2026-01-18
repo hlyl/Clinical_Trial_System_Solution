@@ -1,10 +1,11 @@
 """Lookups/reference data endpoints."""
 
+from fastapi import APIRouter, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from api.db import get_db
 from api.models.lookups import LookupsResponse
 from api.services.lookups import LookupsService
-from fastapi import APIRouter, Depends
-from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter()
 

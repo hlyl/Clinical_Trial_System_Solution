@@ -3,13 +3,14 @@
 from typing import Optional
 from uuid import UUID
 
+from fastapi import APIRouter, Depends, Query
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from api.auth import User, require_admin, require_viewer
 from api.db import get_db
 from api.models.vendors import VendorCreate, VendorListResponse, VendorResponse, VendorUpdate
 from api.services.vendors import VendorService
 from api.utils.pagination import PaginationParams
-from fastapi import APIRouter, Depends, Query
-from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter()
 

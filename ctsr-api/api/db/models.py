@@ -4,12 +4,13 @@ from datetime import date, datetime
 from typing import List, Optional
 from uuid import UUID, uuid4
 
-from api.db.base import Base
 from sqlalchemy import ARRAY, Boolean, CheckConstraint, Date, Index, Integer, String, Text, text
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.dialects.postgresql import UUID as PGUUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
+
+from api.db.base import Base
 
 # =============================================================================
 # Lookup Tables

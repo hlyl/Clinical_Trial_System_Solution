@@ -2,8 +2,9 @@
 
 from typing import AsyncGenerator
 
-from api.config import get_settings
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
+
+from api.config import get_settings
 
 # Global engine and session factory
 _engine: AsyncEngine | None = None

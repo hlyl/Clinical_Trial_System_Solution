@@ -4,10 +4,11 @@ import logging
 from enum import Enum
 from typing import Optional
 
-from api.config import get_settings
-from api.exceptions import AuthenticationError, AuthorizationError
 from fastapi import Depends, Header
 from jose import JWTError, jwt
+
+from api.config import get_settings
+from api.exceptions import AuthenticationError, AuthorizationError
 
 logger = logging.getLogger(__name__)
 

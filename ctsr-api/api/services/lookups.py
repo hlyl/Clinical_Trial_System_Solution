@@ -2,10 +2,11 @@
 
 from typing import List
 
-from api.db.models import Criticality, SystemCategory, ValidationStatus
-from api.models.lookups import CriticalityResponse, LookupsResponse, SystemCategoryResponse, ValidationStatusResponse
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from api.db.models import Criticality, SystemCategory, ValidationStatus
+from api.models.lookups import CriticalityResponse, LookupsResponse, SystemCategoryResponse, ValidationStatusResponse
 
 
 class LookupsService:

@@ -3,11 +3,12 @@
 from datetime import datetime
 from enum import Enum
 
-from api.db import get_db
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from api.db import get_db
 
 router = APIRouter()
 

@@ -4,13 +4,14 @@ import logging
 from typing import Optional
 from uuid import UUID
 
+from sqlalchemy import func, select
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from api.db.models import Vendor
 from api.exceptions import ConflictError, NotFoundError, ValidationError
 from api.models.vendors import VendorCreate, VendorListResponse, VendorResponse, VendorUpdate
 from api.utils.pagination import PaginationMeta, PaginationParams
-from sqlalchemy import func, select
-from sqlalchemy.exc import IntegrityError
-from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger(__name__)
 

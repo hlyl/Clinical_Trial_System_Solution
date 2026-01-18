@@ -4,6 +4,9 @@ import logging
 from typing import Optional
 from uuid import UUID
 
+from fastapi import APIRouter, Depends, Query, status
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from api.auth import User, UserRole, get_current_user, require_role
 from api.db.database import get_db
 from api.models.confirmations import (
@@ -18,8 +21,6 @@ from api.models.confirmations import (
 )
 from api.services.confirmations import ConfirmationService
 from api.utils.pagination import PaginationParams
-from fastapi import APIRouter, Depends, Query, status
-from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger(__name__)
 

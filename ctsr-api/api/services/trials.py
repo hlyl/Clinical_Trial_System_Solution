@@ -5,6 +5,10 @@ from datetime import datetime
 from typing import List, Optional
 from uuid import UUID
 
+from sqlalchemy import and_, func, or_, select
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from api.db.models import SystemInstance, Trial, TrialSystemLink
 from api.exceptions import ConflictError, NotFoundError
 from api.models.trials import (
@@ -18,9 +22,6 @@ from api.models.trials import (
     TrialUpdate,
 )
 from api.utils.pagination import PaginationMeta, PaginationParams
-from sqlalchemy import and_, func, or_, select
-from sqlalchemy.exc import IntegrityError
-from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger(__name__)
 

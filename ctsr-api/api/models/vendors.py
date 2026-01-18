@@ -4,8 +4,9 @@ from datetime import datetime
 from typing import List, Optional
 from uuid import UUID
 
-from api.utils.pagination import PaginationMeta
 from pydantic import BaseModel, Field, field_validator
+
+from api.utils.pagination import PaginationMeta
 
 
 class VendorCreate(BaseModel):
