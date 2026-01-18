@@ -170,6 +170,35 @@ st.markdown(
             overflow: hidden;
         }
 
+        /* Table/Grid elements - use Granite Grey instead of black */
+        .stDataFrame table {
+            color: var(--nn-granite-grey);
+        }
+
+        .stDataFrame thead tr th {
+            background-color: var(--nn-snow-white) !important;
+            color: var(--nn-true-blue) !important;
+            border-bottom: 2px solid var(--nn-granite-grey) !important;
+        }
+
+        .stDataFrame tbody tr td {
+            border-bottom: 1px solid var(--nn-granite-grey) !important;
+            color: var(--nn-granite-grey) !important;
+        }
+
+        /* Grid lines */
+        .element-container, .stMarkdown table {
+            border-color: var(--nn-granite-grey) !important;
+        }
+
+        table {
+            border-color: var(--nn-granite-grey) !important;
+        }
+
+        table th, table td {
+            border-color: var(--nn-granite-grey) !important;
+        }
+
         /* Success/Error/Warning states using spot colors */
         .stSuccess {
             background-color: rgba(34, 139, 34, 0.1);
