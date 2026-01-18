@@ -152,6 +152,36 @@ def render_assign_tab():
         system_options = [s["instance_code"] for s in systems]
         selected_system = st.selectbox("Select System", options=system_options)
 
+    # Display linked systems for selected trial
+    if selected_trial:
+        trial = next((t for t in trials if t["protocol_number"] == selected_trial), None)
+        if trial:
+            st.divider()
+            st.subheader(f"Systems Linked to {selected_trial}")
+
+            with st.spinner("Loading linked systems..."):
+                trial_systems = api_client.get_trial_systems(trial["trial_id"], st.session_state.user_email)
+                linked_systems = trial_systems.get("data", []) if trial_systems else []
+
+            if linked_systems:
+                # Create a dataframe for display
+                linked_systems_df = []
+                for ls in linked_systems:
+                    linked_systems_df.append(
+                        {
+                            "System Code": ls.get("instance_code", "N/A"),
+                            "System Name": ls.get("instance_name", "N/A"),
+                            "Criticality": ls.get("criticality_code", "N/A"),
+                            "Status": ls.get("assignment_status", "N/A"),
+                        }
+                    )
+
+                st.dataframe(linked_systems_df, use_container_width=True, hide_index=True)
+            else:
+                st.info("No systems linked to this trial yet")
+
+            st.divider()
+
     if selected_trial and selected_system:
         trial = next((t for t in trials if t["protocol_number"] == selected_trial), None)
         system = next((s for s in systems if s["instance_code"] == selected_system), None)
