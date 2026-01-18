@@ -351,9 +351,12 @@ class APIClient:
         """Link a system to a trial."""
         return self._make_request(
             "POST",
-            f"/api/v1/trials/{trial_id}/systems/{system_id}",
+            f"/api/v1/trials/{trial_id}/systems",
             user_email=user_email,
-            json_data={"criticality_code": criticality_code},
+            json_data={
+                "instance_id": system_id,
+                "criticality_code": criticality_code,
+            },
         )
 
     def get_trial_systems(
