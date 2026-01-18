@@ -50,6 +50,21 @@ st.markdown(
             font-family: Arial, sans-serif;
         }
 
+        /* Top header bar - Light Blue instead of black */
+        header[data-testid="stHeader"] {
+            background-color: var(--nn-light-blue) !important;
+        }
+
+        /* App header toolbar */
+        .stApp > header {
+            background-color: var(--nn-light-blue) !important;
+        }
+
+        /* Main toolbar area */
+        [data-testid="stToolbar"] {
+            background-color: var(--nn-light-blue) !important;
+        }
+
         /* Typography - Novo Nordisk Style */
         h1, h2, h3, h4, h5, h6 {
             color: var(--nn-true-blue) !important;
