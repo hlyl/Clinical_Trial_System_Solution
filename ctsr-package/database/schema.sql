@@ -256,15 +256,15 @@ CREATE OR REPLACE FUNCTION fn_audit_system_instances()
 RETURNS TRIGGER AS $$
 BEGIN
     IF TG_OP = 'INSERT' THEN
-        INSERT INTO system_instances_audit (instance_id, action, changed_by, new_values)
+        INSERT INTO ctsr.system_instances_audit (instance_id, action, changed_by, new_values)
         VALUES (NEW.instance_id, 'INSERT', NEW.created_by, to_jsonb(NEW));
         RETURN NEW;
     ELSIF TG_OP = 'UPDATE' THEN
-        INSERT INTO system_instances_audit (instance_id, action, changed_by, old_values, new_values)
+        INSERT INTO ctsr.system_instances_audit (instance_id, action, changed_by, old_values, new_values)
         VALUES (NEW.instance_id, 'UPDATE', NEW.updated_by, to_jsonb(OLD), to_jsonb(NEW));
         RETURN NEW;
     ELSIF TG_OP = 'DELETE' THEN
-        INSERT INTO system_instances_audit (instance_id, action, old_values)
+        INSERT INTO ctsr.system_instances_audit (instance_id, action, old_values)
         VALUES (OLD.instance_id, 'DELETE', to_jsonb(OLD));
         RETURN OLD;
     END IF;

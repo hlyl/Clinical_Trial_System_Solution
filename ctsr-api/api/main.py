@@ -87,11 +87,15 @@ async def general_exception_handler(request: Request, exc: Exception) -> JSONRes
 
 
 # Register routers
-from api.routers import health, lookups, vendors
+from api.routers import admin, confirmations, health, lookups, systems, trials, vendors
 
 app.include_router(health.router, tags=["Health"])
 app.include_router(lookups.router, prefix="/api/v1", tags=["Lookups"])
 app.include_router(vendors.router, prefix="/api/v1", tags=["Vendors"])
+app.include_router(systems.router, prefix="/api/v1", tags=["Systems"])
+app.include_router(trials.router, prefix="/api/v1", tags=["Trials"])
+app.include_router(confirmations.router, prefix="/api/v1", tags=["Confirmations"])
+app.include_router(admin.router, prefix="/api/v1/admin", tags=["Admin"])
 
 
 @app.get("/", include_in_schema=False)
