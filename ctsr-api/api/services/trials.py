@@ -2,26 +2,25 @@
 
 import logging
 from datetime import datetime
-from typing import Optional, List
+from typing import List, Optional
 from uuid import UUID
 
-from sqlalchemy import select, func, or_, and_
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.exc import IntegrityError
-
-from api.db.models import Trial, TrialSystemLink, SystemInstance
+from api.db.models import SystemInstance, Trial, TrialSystemLink
+from api.exceptions import ConflictError, NotFoundError
 from api.models.trials import (
-    TrialCreate,
-    TrialUpdate,
-    TrialResponse,
-    TrialDetail,
     LinkedSystemDetail,
     SystemLinkCreate,
-    SystemLinkUpdate,
     SystemLinkResponse,
+    SystemLinkUpdate,
+    TrialCreate,
+    TrialDetail,
+    TrialResponse,
+    TrialUpdate,
 )
-from api.exceptions import NotFoundError, ConflictError
-from api.utils.pagination import PaginationParams, PaginationMeta
+from api.utils.pagination import PaginationMeta, PaginationParams
+from sqlalchemy import and_, func, or_, select
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger(__name__)
 

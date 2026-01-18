@@ -4,13 +4,12 @@ Admin Router
 API endpoints for admin dashboard and administrative operations.
 """
 
-from fastapi import APIRouter, Depends
-from sqlalchemy.ext.asyncio import AsyncSession
-
+from api.auth import User, UserRole, require_role
 from api.db import get_db
 from api.models.admin import DashboardStats
 from api.services.admin import AdminService
-from api.auth import User, UserRole, require_role
+from fastapi import APIRouter, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter()
 

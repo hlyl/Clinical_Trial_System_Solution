@@ -4,23 +4,22 @@ import logging
 from typing import Optional
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Query, status
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from api.auth import User, UserRole, get_current_user, require_role
 from api.db.database import get_db
 from api.models.trials import (
+    SystemLinkCreate,
+    SystemLinkResponse,
+    SystemLinkUpdate,
     TrialCreate,
-    TrialUpdate,
-    TrialResponse,
     TrialDetail,
     TrialListResponse,
-    SystemLinkCreate,
-    SystemLinkUpdate,
-    SystemLinkResponse,
+    TrialResponse,
+    TrialUpdate,
 )
 from api.services.trials import TrialService
 from api.utils.pagination import PaginationParams
+from fastapi import APIRouter, Depends, Query, status
+from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger(__name__)
 

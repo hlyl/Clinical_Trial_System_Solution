@@ -4,9 +4,8 @@ from datetime import date, datetime
 from typing import Any, Dict, List, Optional
 from uuid import UUID
 
-from pydantic import BaseModel, Field
-
 from api.utils.pagination import PaginationMeta
+from pydantic import BaseModel, Field
 
 
 class InterfaceModel(BaseModel):

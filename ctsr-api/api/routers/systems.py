@@ -3,20 +3,13 @@
 from typing import Optional
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Query
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from api.auth import User, require_admin, require_viewer
 from api.db import get_db
-from api.models.systems import (
-    SystemCreate,
-    SystemDetail,
-    SystemListResponse,
-    SystemResponse,
-    SystemUpdate,
-)
+from api.models.systems import SystemCreate, SystemDetail, SystemListResponse, SystemResponse, SystemUpdate
 from api.services.systems import SystemService
 from api.utils.pagination import PaginationParams
+from fastapi import APIRouter, Depends, Query
+from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter()
 

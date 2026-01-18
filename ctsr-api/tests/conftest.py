@@ -4,13 +4,12 @@ from uuid import uuid4
 
 import pytest
 import pytest_asyncio
+from api.config import get_settings
+from api.main import app
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy import text
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
-
-from api.config import get_settings
-from api.main import app
 
 
 @pytest_asyncio.fixture(scope="session")

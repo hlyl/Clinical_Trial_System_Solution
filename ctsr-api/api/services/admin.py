@@ -5,18 +5,18 @@ Business logic for admin dashboard statistics and aggregations.
 """
 
 from datetime import datetime, timedelta
-from sqlalchemy import select, func, and_, or_, case
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.db.models import Trial, SystemInstance, TrialSystemLink, Confirmation, ValidationStatus
+from api.db.models import Confirmation, SystemInstance, Trial, TrialSystemLink, ValidationStatus
 from api.models.admin import (
-    DashboardStats,
-    TrialSummary,
-    SystemSummary,
     ConfirmationSummary,
-    ValidationAlertSummary,
+    DashboardStats,
     RecentActivity,
+    SystemSummary,
+    TrialSummary,
+    ValidationAlertSummary,
 )
+from sqlalchemy import and_, case, func, or_, select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class AdminService:
