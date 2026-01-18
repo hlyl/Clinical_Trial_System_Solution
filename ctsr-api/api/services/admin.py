@@ -57,9 +57,10 @@ class AdminService:
     
     async def _get_trial_stats(self) -> TrialSummary:
         """Get trial summary statistics."""
-        # Total trials
+        # Total trials (excluding closed/cancelled)
         total_result = await self.db.execute(
             select(func.count(Trial.trial_id))
+            .where(Trial.trial_status.notin_(["CLOSED", "CANCELLED"]))
         )
         total_trials = total_result.scalar() or 0
         
@@ -106,7 +107,7 @@ class AdminService:
             .where(
                 and_(
                     SystemInstance.is_active == True,
-                    SystemInstance.validation_status_code == "VALIDATED
+                    SystemInstance.validation_status_code == "VALIDATED"
                 )
             )
         )
@@ -119,8 +120,8 @@ class AdminService:
                 and_(
                     SystemInstance.is_active == True,
                     or_(
-                        SystemInstance.validation_status_code == "NOT_VALIDATED,
-                        SystemInstance.validation_status_code == "PENDING_VALIDATION
+                        SystemInstance.validation_status_code == "NOT_VALIDATED",
+                        SystemInstance.validation_status_code == "PENDING_VALIDATION"
                     )
                 )
             )
@@ -130,7 +131,7 @@ class AdminService:
         # Systems by criticality
         criticality_result = await self.db.execute(
             select(
-                TrialSystemLink.criticality,
+                TrialSystemLink.criticality_code,
                 func.count(TrialSystemLink.link_id)
             )
             .join(SystemInstance, TrialSystemLink.instance_id == SystemInstance.instance_id)
@@ -140,10 +141,10 @@ class AdminService:
                     SystemInstance.is_active == True
                 )
             )
-            .group_by(TrialSystemLink.criticality)
+            .group_by(TrialSystemLink.criticality_code)
         )
         systems_by_criticality = {
-            row[0].value: row[1] for row in criticality_result.all()
+            row[0]: row[1] for row in criticality_result.all()
         }
         
         return SystemSummary(
@@ -231,16 +232,19 @@ class AdminService:
                 Trial.protocol_number,
                 Trial.created_at
             )
+            .where(Trial.trial_status.notin_(["CLOSED", "CANCELLED"]))
             .order_by(Trial.created_at.desc())
             .limit(limit)
         )
         for row in trial_result.all():
+            # Ensure datetime is naive
+            performed_at = row.created_at.replace(tzinfo=None) if row.created_at.tzinfo else row.created_at
             activities.append(RecentActivity(
                 activity_type="TRIAL_CREATED",
                 entity_id=str(row.trial_id),
                 entity_name=row.protocol_number,
                 performed_by="system",
-                performed_at=row.created_at,
+                performed_at=performed_at,
                 details=f"Trial {row.protocol_number} created"
             ))
         
@@ -258,12 +262,14 @@ class AdminService:
             .limit(limit)
         )
         for row in system_result.all():
+            # Ensure datetime is naive
+            performed_at = row.created_at.replace(tzinfo=None) if row.created_at.tzinfo else row.created_at
             activities.append(RecentActivity(
                 activity_type="SYSTEM_ADDED",
                 entity_id=str(row.instance_id),
                 entity_name=f"{row.instance_code} - {row.platform_name}",
                 performed_by=row.created_by or "system",
-                performed_at=row.created_at,
+                performed_at=performed_at,
                 details=f"System {row.instance_code} added"
             ))
         
@@ -282,12 +288,14 @@ class AdminService:
             .limit(limit)
         )
         for row in confirmation_result.all():
+            # Convert date to datetime for sorting
+            performed_at = datetime.combine(row.confirmed_date, datetime.min.time()) if row.confirmed_date else datetime.utcnow()
             activities.append(RecentActivity(
                 activity_type="CONFIRMATION_SUBMITTED",
                 entity_id=str(row.confirmation_id),
                 entity_name=f"{row.confirmation_type} - {row.protocol_number}",
                 performed_by=row.confirmed_by or "system",
-                performed_at=row.confirmed_date,
+                performed_at=performed_at,
                 details=f"{row.confirmation_type} confirmation submitted for {row.protocol_number}"
             ))
         

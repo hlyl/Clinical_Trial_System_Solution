@@ -1,7 +1,8 @@
 """Service layer for system instance management."""
 
 import logging
-from typing import Optional
+from datetime import date, datetime
+from typing import Any, Dict, Optional
 from uuid import UUID
 
 from sqlalchemy import func, or_, select
@@ -27,6 +28,47 @@ logger = logging.getLogger(__name__)
 
 class SystemService:
     """Service for system instance CRUD operations."""
+
+    @staticmethod
+    def _serialize_for_audit(value: Any) -> Any:
+        """Convert values to JSON-serializable forms for audit storage."""
+        if isinstance(value, (datetime, date)):
+            return value.isoformat()
+        if isinstance(value, UUID):
+            return str(value)
+        if isinstance(value, list):
+            return [SystemService._serialize_for_audit(v) for v in value]
+        if isinstance(value, dict):
+            return {
+                k: SystemService._serialize_for_audit(v) for k, v in value.items()
+            }
+        return value
+
+    @staticmethod
+    async def _record_audit(
+        db: AsyncSession,
+        instance_id: UUID,
+        action: str,
+        changed_by: str,
+        old_values: Optional[Dict[str, Any]] = None,
+        new_values: Optional[Dict[str, Any]] = None,
+    ) -> None:
+        """Persist an audit record for a system instance change."""
+        record = SystemInstanceAudit(
+            instance_id=instance_id,
+            action=action,
+            changed_by=changed_by,
+            old_values={
+                k: SystemService._serialize_for_audit(v) for k, v in (old_values or {}).items()
+            }
+            or None,
+            new_values={
+                k: SystemService._serialize_for_audit(v) for k, v in (new_values or {}).items()
+            }
+            or None,
+        )
+        db.add(record)
+        await db.flush()
 
     @staticmethod
     async def list_systems(
@@ -193,6 +235,14 @@ class SystemService:
         try:
             await db.flush()
             await db.refresh(system)
+            await SystemService._record_audit(
+                db=db,
+                instance_id=system.instance_id,
+                action="CREATE",
+                changed_by=user_email,
+                old_values=None,
+                new_values=SystemResponse.model_validate(system).model_dump(),
+            )
             logger.info(f"Created system {system.instance_id}")
             return SystemResponse.model_validate(system)
         except IntegrityError as e:
@@ -301,6 +351,9 @@ class SystemService:
         if not system:
             raise NotFoundError("System", instance_id)
 
+        # Capture state before changes for auditing
+        old_snapshot = SystemResponse.model_validate(system).model_dump()
+
         # Update fields if provided
         update_data = system_data.model_dump(exclude_unset=True)
 
@@ -324,6 +377,25 @@ class SystemService:
         try:
             await db.flush()
             await db.refresh(system)
+
+            # Compute changed fields for audit trail
+            new_snapshot = SystemResponse.model_validate(system).model_dump()
+            changed_keys = {
+                key
+                for key, new_value in new_snapshot.items()
+                if old_snapshot.get(key) != new_value
+            }
+
+            if changed_keys:
+                await SystemService._record_audit(
+                    db=db,
+                    instance_id=instance_id,
+                    action="UPDATE",
+                    changed_by=user_email,
+                    old_values={k: old_snapshot[k] for k in changed_keys if k in old_snapshot},
+                    new_values={k: new_snapshot[k] for k in changed_keys},
+                )
+
             logger.info(f"Updated system {instance_id}")
             return SystemResponse.model_validate(system)
         except IntegrityError as e:

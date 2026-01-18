@@ -2,6 +2,18 @@
 
 Regulatory compliance solution for documenting IT systems used in clinical trials per ICH E6(R3) requirements.
 
+## Project Status: ✅ Core API Complete
+
+**All 24 REST API endpoints implemented:**
+- Phase 1: Foundation (2 endpoints) ✅
+- Phase 2: Vendors CRUD (4 endpoints) ✅
+- Phase 3: Systems CRUD (4 endpoints) ✅
+- Phase 4: Trials + Trial Systems (7 endpoints) ✅
+- Phase 5: Confirmations + Exports (6 endpoints) ✅
+- Phase 6: Admin Dashboard (1 endpoint) ✅
+
+See [`ctsr-api/README.md`](./ctsr-api/README.md) for complete API documentation.
+
 ## Quick Start
 
 ### 1. Start PostgreSQL Database
@@ -57,8 +69,21 @@ See the [ctsr-package](./ctsr-package) folder for complete documentation:
 - [Database schema](./ctsr-package/database/schema.sql) - PostgreSQL DDL with audit triggers
 - [Upload schema](./ctsr-package/schemas/ctsr_vendor_upload_schema_v1.1.json) - JSON Schema for vendor uploads
 
+## Architecture
+
+**Backend API (ctsr-api/):** FastAPI REST API with 24 endpoints - ✅ COMPLETE
+- Authentication: Azure AD JWT (local dev bypass mode)
+- Database: PostgreSQL with async SQLAlchemy ORM
+- Endpoints: Health, Lookups, Vendors, Systems, Trials, Confirmations, Admin
+
+**Frontend UI:** Streamlit application - 🚧 TODO
+
+**Azure Functions:** Serverless processors - 🚧 TODO
+- Vendor upload processor
+- Reminder scheduler
+
 ## Next Steps
 
-1. Implement FastAPI backend
-2. Implement Streamlit UI
-3. Implement Azure Functions for upload processing
+1. ✅ ~~Implement FastAPI backend~~ **COMPLETE**
+2. 🚧 Implement Streamlit UI
+3. 🚧 Implement Azure Functions for upload processing
