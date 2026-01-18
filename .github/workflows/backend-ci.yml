@@ -33,6 +33,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install pytest pytest-asyncio pytest-cov flake8 black isort pylint mypy
+        pip install -e .
 
     - name: Lint with flake8
       run: |
