@@ -159,7 +159,8 @@ def render_assign_tab():
         if trial and system:
             criticality = st.selectbox(
                 "Criticality Level",
-                options=["CRITICAL", "STANDARD", "SUPPORTING"],
+                options=["CRIT", "MAJ", "STD"],
+                format_func=lambda x: {"CRIT": "Critical", "MAJ": "Major", "STD": "Standard"}[x],
             )
 
             if st.button("🔗 Link System to Trial", type="primary"):
