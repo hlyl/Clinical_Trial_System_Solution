@@ -102,7 +102,7 @@ Runs on: All PRs to main/develop
 ```
 .github/workflows/
 ├── backend-ci.yml           # Backend pipeline
-├── frontend-ci.yml          # Frontend pipeline  
+├── frontend-ci.yml          # Frontend pipeline
 ├── integration-tests.yml    # Integration tests
 └── pre-commit.yml           # Pre-commit on PR
 ```
@@ -157,7 +157,7 @@ pre-commit run --all-files           # All checks
 # Black (formatter)
 black .
 
-# isort (import sorter)  
+# isort (import sorter)
 isort .
 
 # Both

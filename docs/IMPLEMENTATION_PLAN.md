@@ -1,6 +1,6 @@
 # CTSR Implementation Plan & Status
 
-**Last Updated:** January 18, 2026  
+**Last Updated:** January 18, 2026
 **Current Status:** Backend API Complete (24/24 endpoints) ✅
 
 ---
@@ -275,17 +275,17 @@ from typing import Optional, Dict, Any
 class CTSRClient:
     def __init__(self, base_url: str = "http://localhost:8001"):
         self.base_url = base_url
-        
+
     def get(self, endpoint: str, params: Optional[Dict] = None) -> Any:
         response = requests.get(f"{self.base_url}{endpoint}", params=params)
         response.raise_for_status()
         return response.json()
-    
+
     def post(self, endpoint: str, data: Dict) -> Any:
         response = requests.post(f"{self.base_url}{endpoint}", json=data)
         response.raise_for_status()
         return response.json()
-    
+
     # Add put, delete methods...
 ```
 
@@ -310,7 +310,7 @@ page = st.number_input("Page", min_value=1, value=1)
 limit = st.selectbox("Items per page", [10, 25, 50, 100])
 offset = (page - 1) * limit
 
-response = api_client.get("/api/v1/systems", 
+response = api_client.get("/api/v1/systems",
                           params={"limit": limit, "offset": offset})
 
 # Display data
@@ -447,15 +447,15 @@ func new --name ReminderScheduler --template "Timer trigger"
 SELECT * FROM ctsr.system_instances WHERE is_active = true;
 
 -- Get trial with linked systems
-SELECT t.*, tsl.*, si.* 
+SELECT t.*, tsl.*, si.*
 FROM ctsr.trials t
 LEFT JOIN ctsr.trial_system_links tsl ON t.trial_id = tsl.trial_id
 LEFT JOIN ctsr.system_instances si ON tsl.instance_id = si.instance_id
 WHERE t.trial_id = '<trial-id>';
 
 -- Get pending confirmations
-SELECT * FROM ctsr.confirmations 
-WHERE confirmation_status = 'PENDING' 
+SELECT * FROM ctsr.confirmations
+WHERE confirmation_status = 'PENDING'
   AND due_date < CURRENT_DATE;
 ```
 
