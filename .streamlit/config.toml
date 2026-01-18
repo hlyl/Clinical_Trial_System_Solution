@@ -1,0 +1,23 @@
+[theme]
+# Base theme to inherit from
+base = "light"
+
+# Primary accent color (buttons, highlights, interactive elements)
+primaryColor = "#0066a1"   # Replace with Novo Nordisk blue
+
+# Main background
+backgroundColor = "#ffffff"
+
+# Sidebar and widget backgrounds
+secondaryBackgroundColor = "#f0f2f6"
+
+# Text color
+textColor = "#262730"
+
+# Font family
+font = "sans serif"
+
+[theme.sidebar]
+backgroundColor = "#003366"
+textColor = "#ffffff"
+primaryColor = "#0099cc"

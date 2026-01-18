@@ -30,35 +30,26 @@ def format_datetime(datetime_str: Optional[str]) -> str:
 
 
 def status_badge(status: str) -> str:
-    """Return HTML for status badge using Novo Nordisk CVI spot colors."""
-    # Novo Nordisk CVI Spot Colors
-    # Lava Red: error/failed/overdue states
-    # Golden Yellow: warning/pending/planned states
-    # Forest Green: success/active/confirmed/healthy states
-    # True Blue: neutral/completed states
-    # Warm Grey: inactive states
+    """Return HTML for status badge with standard colors."""
     status_colors = {
-        "ACTIVE": "#228B22",  # Forest Green
-        "PLANNED": "#FFD700",  # Golden Yellow
-        "COMPLETED": "#001965",  # True Blue
-        "PENDING": "#FFD700",  # Golden Yellow
-        "CONFIRMED": "#228B22",  # Forest Green
-        "OVERDUE": "#DC143C",  # Lava Red
-        "VALIDATED": "#228B22",  # Forest Green
-        "FAILED": "#DC143C",  # Lava Red
-        "HEALTHY": "#228B22",  # Forest Green
-        "UNHEALTHY": "#DC143C",  # Lava Red
-        "INACTIVE": "#C9C0B7",  # Warm Grey
+        "ACTIVE": "#00CC00",  # Green
+        "PLANNED": "#FFA500",  # Orange
+        "COMPLETED": "#0068C9",  # Blue
+        "PENDING": "#FFA500",  # Orange
+        "CONFIRMED": "#00CC00",  # Green
+        "OVERDUE": "#FF4B4B",  # Red
+        "VALIDATED": "#00CC00",  # Green
+        "FAILED": "#FF4B4B",  # Red
+        "HEALTHY": "#00CC00",  # Green
+        "UNHEALTHY": "#FF4B4B",  # Red
+        "INACTIVE": "#808495",  # Gray
     }
-    color = status_colors.get(status, "#8B8D8F")  # Granite Grey as fallback
-
-    # Use white text for dark colors, True Blue for light colors
-    dark_colors = ["#228B22", "#001965", "#DC143C", "#8B8D8F", "#C9C0B7"]
-    text_color = "#FFFFFF" if color in dark_colors else "#001965"
+    color = status_colors.get(status, "#808495")
+    text_color = "#FFFFFF"
 
     badge_style = (
-        f"background-color: {color}; color: {text_color}; padding: 6px 12px; "
-        f"border-radius: 24px; font-weight: 500; font-size: 0.875rem;"
+        f"background-color: {color}; color: {text_color}; padding: 4px 12px; "
+        f"border-radius: 12px; font-weight: 500; font-size: 0.875rem; display: inline-block;"
     )
     return f"<span style='{badge_style}'>{status}</span>"
 
