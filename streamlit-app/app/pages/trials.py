@@ -145,12 +145,27 @@ def render_assign_tab():
         selected_trial = st.selectbox("Select Trial", options=trial_options)
 
     with col2:
-        with st.spinner("Loading systems..."):
+        with st.spinner("Loading systems and vendors..."):
             response = api_client.list_systems(limit=100, user_email=st.session_state.user_email)
             systems = response.get("data", []) if response else []
 
-        system_options = [s["instance_code"] for s in systems]
-        selected_system = st.selectbox("Select System", options=system_options)
+            response = api_client.list_vendors(limit=100, user_email=st.session_state.user_email)
+            vendors = response.get("data", []) if response else []
+
+        # Create vendor lookup map
+        vendor_map = {v["vendor_id"]: v["vendor_name"] for v in vendors}
+
+        # Create system display options with vendor info
+        system_display_map = {}
+        system_options = []
+        for s in systems:
+            vendor_name = vendor_map.get(s.get("platform_vendor_id"), "Unknown Vendor")
+            display_text = f"{s['instance_code']} ({vendor_name})"
+            system_display_map[display_text] = s
+            system_options.append(display_text)
+
+        selected_system_display = st.selectbox("Select System", options=system_options)
+        selected_system = system_display_map.get(selected_system_display) if selected_system_display else None
 
     # Display linked systems for selected trial
     if selected_trial:
@@ -167,9 +182,14 @@ def render_assign_tab():
                 # Create a dataframe for display
                 linked_systems_df = []
                 for ls in linked_systems:
+                    # Find the system in the systems list to get vendor info
+                    system_info = next((s for s in systems if s["instance_id"] == ls["instance_id"]), {})
+                    vendor_name = vendor_map.get(system_info.get("platform_vendor_id"), "Unknown")
+
                     linked_systems_df.append(
                         {
                             "System Code": ls.get("instance_code", "N/A"),
+                            "Vendor": vendor_name,
                             "System Name": ls.get("instance_name", "N/A"),
                             "Criticality": ls.get("criticality_code", "N/A"),
                             "Status": ls.get("assignment_status", "N/A"),
@@ -184,9 +204,8 @@ def render_assign_tab():
 
     if selected_trial and selected_system:
         trial = next((t for t in trials if t["protocol_number"] == selected_trial), None)
-        system = next((s for s in systems if s["instance_code"] == selected_system), None)
 
-        if trial and system:
+        if trial and selected_system:
             criticality = st.selectbox(
                 "Criticality Level",
                 options=["CRIT", "MAJ", "STD"],
@@ -196,7 +215,7 @@ def render_assign_tab():
             # Check if system is already linked to this trial
             trial_systems = api_client.get_trial_systems(trial["trial_id"], st.session_state.user_email)
             linked_systems = trial_systems.get("data", []) if trial_systems else []
-            is_already_linked = any(ls["instance_id"] == system["instance_id"] for ls in linked_systems)
+            is_already_linked = any(ls["instance_id"] == selected_system["instance_id"] for ls in linked_systems)
 
             if is_already_linked:
                 st.warning(f"This system is already linked to trial {selected_trial}")
@@ -205,7 +224,7 @@ def render_assign_tab():
                     with st.spinner("Linking..."):
                         result = api_client.link_system_to_trial(
                             trial_id=trial["trial_id"],
-                            system_id=system["instance_id"],
+                            system_id=selected_system["instance_id"],
                             criticality_code=criticality,
                             user_email=st.session_state.user_email,
                         )
