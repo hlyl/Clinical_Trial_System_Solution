@@ -163,18 +163,26 @@ def render_assign_tab():
                 format_func=lambda x: {"CRIT": "Critical", "MAJ": "Major", "STD": "Standard"}[x],
             )
 
-            if st.button("🔗 Link System to Trial", type="primary"):
-                with st.spinner("Linking..."):
-                    result = api_client.link_system_to_trial(
-                        trial_id=trial["trial_id"],
-                        system_id=system["instance_id"],
-                        criticality_code=criticality,
-                        user_email=st.session_state.user_email,
-                    )
+            # Check if system is already linked to this trial
+            trial_systems = api_client.get_trial_systems(trial["trial_id"], st.session_state.user_email)
+            linked_systems = trial_systems.get("data", []) if trial_systems else []
+            is_already_linked = any(ls["instance_id"] == system["instance_id"] for ls in linked_systems)
 
-                if result:
-                    show_success("System linked to trial successfully!")
-                    st.session_state.refresh_trigger += 1
-                    st.rerun()
-                else:
-                    show_error("Failed to link system to trial.")
+            if is_already_linked:
+                st.warning(f"This system is already linked to trial {selected_trial}")
+            else:
+                if st.button("🔗 Link System to Trial", type="primary"):
+                    with st.spinner("Linking..."):
+                        result = api_client.link_system_to_trial(
+                            trial_id=trial["trial_id"],
+                            system_id=system["instance_id"],
+                            criticality_code=criticality,
+                            user_email=st.session_state.user_email,
+                        )
+
+                    if result:
+                        show_success("System linked to trial successfully!")
+                        st.session_state.refresh_trigger += 1
+                        st.rerun()
+                    else:
+                        show_error("Failed to link system to trial.")
