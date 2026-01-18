@@ -15,18 +15,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY . .
 
-# Create .streamlit directory and config
-RUN mkdir -p ~/.streamlit
-RUN echo "\
-[client]\n\
-showErrorDetails = false\n\
-toolbarMode = 'viewer'\n\
-\n\
-[server]\n\
-port = 8501\n\
-headless = true\n\
-" > ~/.streamlit/config.toml
-
 # Expose port
 EXPOSE 8501
 
