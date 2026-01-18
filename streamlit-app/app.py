@@ -65,6 +65,24 @@ st.markdown(
             background-color: var(--nn-light-blue) !important;
         }
 
+        /* Bottom bar/footer - Light Blue instead of black */
+        footer {
+            background-color: var(--nn-light-blue) !important;
+        }
+
+        [data-testid="stBottom"] {
+            background-color: var(--nn-light-blue) !important;
+        }
+
+        .stApp > footer {
+            background-color: var(--nn-light-blue) !important;
+        }
+
+        /* Bottom element containers */
+        [data-testid="stBottomBlockContainer"] {
+            background-color: var(--nn-light-blue) !important;
+        }
+
         /* Typography - Novo Nordisk Style */
         h1, h2, h3, h4, h5, h6 {
             color: var(--nn-true-blue) !important;
