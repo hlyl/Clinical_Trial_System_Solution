@@ -149,11 +149,11 @@ jobs:
         cd ctsr-api
         pytest tests/integration/ -v --tb=short
       env:
-        DATABASE_URL: postgresql+asyncpg://ctsr_user:ctsr_password@localhost:5432/ctsr_db
-        TEST_DATABASE_URL: postgresql+asyncpg://ctsr_user:ctsr_password@localhost:5432/ctsr_db
-        SECRET_KEY: test-secret-key-for-ci
         POSTGRES_HOST: localhost
         POSTGRES_PORT: 5432
         POSTGRES_DB: ctsr_db
         POSTGRES_USER: ctsr_user
         POSTGRES_PASSWORD: ctsr_password
+        DATABASE_URL: postgresql+asyncpg://ctsr_user:ctsr_password@localhost:5432/ctsr_db
+        TEST_DATABASE_URL: postgresql+asyncpg://ctsr_user:ctsr_password@localhost:5432/ctsr_db
+        SECRET_KEY: test-secret-key-for-ci
