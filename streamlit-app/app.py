@@ -138,15 +138,30 @@ st.markdown(
         }
 
         /* Input fields - subtle rounded corners */
-        .stTextInput input, .stSelectbox select, .stNumberInput input {
+        .stTextInput input, .stSelectbox select, .stNumberInput input, .stTextArea textarea {
             border-radius: 4px;
-            border: 1px solid var(--nn-warm-grey);
+            border: 1px solid var(--nn-granite-grey);
+            background-color: var(--nn-snow-white);
             color: var(--nn-true-blue);
         }
 
-        .stTextInput input:focus, .stSelectbox select:focus, .stNumberInput input:focus {
+        .stTextInput input:focus, .stSelectbox select:focus, .stNumberInput input:focus, .stTextArea textarea:focus {
             border-color: var(--nn-sea-blue);
             box-shadow: 0 0 0 1px var(--nn-sea-blue);
+        }
+
+        /* Dropdown specific styling */
+        .stSelectbox > div > div {
+            background-color: var(--nn-snow-white);
+            border-color: var(--nn-granite-grey);
+        }
+
+        /* Date inputs */
+        .stDateInput input {
+            border-radius: 4px;
+            border: 1px solid var(--nn-granite-grey);
+            background-color: var(--nn-snow-white);
+            color: var(--nn-true-blue);
         }
 
         /* Dataframe/Table styling */
