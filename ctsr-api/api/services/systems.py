@@ -238,7 +238,7 @@ class SystemService:
             await SystemService._record_audit(
                 db=db,
                 instance_id=system.instance_id,
-                action="CREATE",
+                action="INSERT",
                 changed_by=user_email,
                 old_values=None,
                 new_values=SystemResponse.model_validate(system).model_dump(),

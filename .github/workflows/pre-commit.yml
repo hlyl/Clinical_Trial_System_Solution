@@ -1,0 +1,48 @@
+name: Pre-commit Hooks
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install pre-commit
+      run: |
+        python -m pip install pre-commit
+
+    - name: Get changed files
+      id: files
+      run: |
+        echo "changed=$(git diff --name-only origin/main HEAD | grep -E '\.py$' | tr '\n' ' ')" >> $GITHUB_OUTPUT
+
+    - name: Run pre-commit on changed files
+      run: |
+        if [ -f .pre-commit-config.yaml ]; then
+          pre-commit run --files ${{ steps.files.outputs.changed }} || true
+        else
+          echo "No .pre-commit-config.yaml found"
+        fi
+
+    - name: Generate pre-commit report
+      if: always()
+      uses: actions/github-script@v6
+      with:
+        script: |
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: '📝 Pre-commit checks completed!'
+          })

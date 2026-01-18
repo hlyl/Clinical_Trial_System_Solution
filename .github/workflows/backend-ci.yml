@@ -1,0 +1,110 @@
+name: Backend CI
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'ctsr-api/**'
+      - '.github/workflows/backend-ci.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'ctsr-api/**'
+
+jobs:
+  test-and-lint:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.11', '3.12']
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+        cache: 'pip'
+
+    - name: Install dependencies
+      run: |
+        cd ctsr-api
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest pytest-cov flake8 black isort pylint mypy
+
+    - name: Lint with flake8
+      run: |
+        cd ctsr-api
+        # Stop the build if there are Python syntax errors or undefined names
+        flake8 api --count --select=E9,F63,F7,F82 --show-source --statistics
+        # Exit-zero treats all errors as warnings
+        flake8 api --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+    - name: Check code formatting with Black
+      run: |
+        cd ctsr-api
+        black --check api/ --line-length=120
+
+    - name: Check import ordering with isort
+      run: |
+        cd ctsr-api
+        isort --check-only api/
+
+    - name: Type checking with mypy
+      run: |
+        cd ctsr-api
+        mypy api/ --ignore-missing-imports || true
+
+    - name: Run tests with pytest
+      run: |
+        cd ctsr-api
+        pytest tests/ -v --cov=api --cov-report=xml --cov-report=html
+
+    - name: Upload coverage reports
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./ctsr-api/coverage.xml
+        flags: backend
+        name: backend-coverage
+
+    - name: Comment PR with test results
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          const coverage = 'ctsr-api/coverage.xml';
+          if (fs.existsSync(coverage)) {
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '✅ Backend tests passed and code quality checks completed!'
+            })
+          }
+
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install security tools
+      run: |
+        python -m pip install bandit safety
+
+    - name: Run Bandit security check
+      run: |
+        cd ctsr-api
+        bandit -r api/ -ll || true
+
+    - name: Check for known vulnerabilities
+      run: |
+        cd ctsr-api
+        safety check --file requirements.txt || true

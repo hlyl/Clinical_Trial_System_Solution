@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  # Backend API
+  api:
+    build:
+      context: ./ctsr-api
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8001"
+    environment:
+      - LOG_LEVEL=info
+      - DATABASE_URL=sqlite:///./ctsr.db
+    volumes:
+      - ./ctsr-api/data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ctsr
+
+  # Frontend
+  streamlit:
+    build:
+      context: ./streamlit-app
+      dockerfile: Dockerfile
+    ports:
+      - "8501:8501"
+    environment:
+      - API_BASE_URL=http://api:8001
+    depends_on:
+      api:
+        condition: service_healthy
+    volumes:
+      - ./streamlit-app:/app
+    networks:
+      - ctsr
+    command: streamlit run app.py --server.address=0.0.0.0
+
+networks:
+  ctsr:
+    driver: bridge
+
+volumes:
+  api_data:

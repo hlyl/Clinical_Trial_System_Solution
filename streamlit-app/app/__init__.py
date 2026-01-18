@@ -1,0 +1,1 @@
+"""CTSR Streamlit Application."""

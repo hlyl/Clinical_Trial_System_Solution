@@ -544,8 +544,7 @@ curl http://localhost:8001/api/v1/admin/dashboard | jq .
 
 ## 📋 Checklist for Continuation
 
-- [ ] Clone repo on new machine
-- [ ] Install UV, Docker, PostgreSQL client
+
 - [ ] Start PostgreSQL with docker-compose
 - [ ] Verify database schema loaded
 - [ ] Start backend API (port 8001)
