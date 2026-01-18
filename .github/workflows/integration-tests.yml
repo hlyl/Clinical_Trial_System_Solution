@@ -19,9 +19,9 @@ jobs:
           POSTGRES_PASSWORD: ctsr_password
         options: >-
           --health-cmd="pg_isready -U ctsr_user"
-          --health-interval=10s
+          --health-interval=5s
           --health-timeout=5s
-          --health-retries=5
+          --health-retries=10
         ports:
           - 5432:5432
 
@@ -49,7 +49,7 @@ jobs:
         import time
         import psycopg2
 
-        max_attempts = 30
+        max_attempts = 60
         for attempt in range(max_attempts):
             try:
                 conn = psycopg2.connect(
@@ -63,10 +63,13 @@ jobs:
                 print("PostgreSQL is ready!")
                 break
             except Exception as e:
-                print(f"Waiting for PostgreSQL... (attempt {attempt + 1}/{max_attempts})")
+                print(f"Waiting for PostgreSQL... (attempt {attempt + 1}/{max_attempts}): {e}")
                 time.sleep(2)
         else:
             raise Exception("PostgreSQL did not become ready in time")
+
+        # Wait a bit more to ensure stability
+        time.sleep(5)
         EOF
 
     - name: Initialize database
