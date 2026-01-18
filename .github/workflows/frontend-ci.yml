@@ -50,7 +50,7 @@ jobs:
     - name: Check import ordering with isort
       run: |
         cd streamlit-app
-        isort --check-only app/ app.py
+        isort --check-only --profile black app/ app.py
 
     - name: Type checking with mypy
       run: |

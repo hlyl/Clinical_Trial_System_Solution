@@ -50,7 +50,7 @@ jobs:
     - name: Check import ordering with isort
       run: |
         cd ctsr-api
-        isort --check-only api/
+        isort --check-only --profile black api/
 
     - name: Type checking with mypy
       run: |
