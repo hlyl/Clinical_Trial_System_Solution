@@ -1,5 +1,6 @@
 """Configuration management for CTSR API."""
 
+import os
 from functools import lru_cache
 from typing import List
 
@@ -11,7 +12,7 @@ class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
 
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=".env" if os.path.exists(".env") else None,
         env_file_encoding="utf-8",
         case_sensitive=False,
         extra="ignore",
@@ -75,4 +76,7 @@ class Settings(BaseSettings):
 @lru_cache
 def get_settings() -> Settings:
     """Get cached settings instance."""
+    # Clear cache in test environment to pick up TEST_DATABASE_URL
+    if os.getenv("TEST_DATABASE_URL"):
+        get_settings.cache_clear()
     return Settings()
