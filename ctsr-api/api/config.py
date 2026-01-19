@@ -23,6 +23,8 @@ class Settings(BaseSettings):
     postgres_db: str = Field(default="ctsr")
     postgres_user: str = Field(default="ctsr_user")
     postgres_password: str = Field(default="ctsr_dev_password")
+    database_url_override: str = Field(default="", alias="DATABASE_URL")
+    test_database_url_override: str = Field(default="", alias="TEST_DATABASE_URL")
 
     # API
     api_host: str = Field(default="0.0.0.0")
@@ -44,6 +46,11 @@ class Settings(BaseSettings):
     @property
     def database_url(self) -> str:
         """Build async PostgreSQL connection URL."""
+        # Use TEST_DATABASE_URL if set (for testing), then DATABASE_URL, then build from components
+        if self.test_database_url_override:
+            return self.test_database_url_override
+        if self.database_url_override:
+            return self.database_url_override
         return (
             f"postgresql+asyncpg://{self.postgres_user}:{self.postgres_password}"
             f"@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"
