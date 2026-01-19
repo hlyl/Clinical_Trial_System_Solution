@@ -1,46 +1,57 @@
 # CTSR Implementation Plan & Status
 
 **Last Updated:** January 18, 2026
-**Current Status:** Backend API Complete (24/24 endpoints) ✅
+**Current Status:** Backend API + Streamlit UI complete; CI green ✅
 
 ---
 
 ## 📊 Project Status Overview
 
-### ✅ COMPLETED: Backend API (ctsr-api/)
+### ✅ COMPLETED: Backend API (ctsr-api/) and Streamlit UI
 
-**All 6 Phases Complete:**
-- **Phase 1:** Foundation (2 endpoints) - Health check, Lookups
-- **Phase 2:** Vendors CRUD (4 endpoints) - List, Create, Get, Update
-- **Phase 3:** Systems CRUD (4 endpoints) - List, Create, Get, Update (with audit trail)
-- **Phase 4:** Trials + Trial Systems (7 endpoints) - Trial CRUD + Link/Unlink systems
-- **Phase 5:** Confirmations + Exports (6 endpoints) - Confirmation workflow + eTMF exports
-- **Phase 6:** Admin Dashboard (1 endpoint) - Aggregated statistics
+**Backend Completion (6 phases):**
+- **Phase 1:** Foundation - Health check, Lookups
+- **Phase 2:** Vendors CRUD - List/Create/Get/Update
+- **Phase 3:** Systems CRUD - List/Create/Get/Update (with audit trail)
+- **Phase 4:** Trials + Trial Systems - Trial CRUD + Link/Unlink systems
+- **Phase 5:** Confirmations + Exports - Confirmation workflow + eTMF exports
+- **Phase 6:** Admin Dashboard - Aggregated statistics
 
-**Technology Stack:**
+**Streamlit UI Completion:**
+- Native Streamlit styling (custom CSS removed per request)
+- Trial-system linking fixed (body payload + criticality codes CRIT/MAJ/STD)
+- Duplicate link prevention with user messaging
+- Vendor dropdown filter between trial and system selection
+- Linked systems table shows vendor, criticality, status
+
+**Technology Stack (current):**
 - FastAPI 0.128.0 (async REST API)
 - SQLAlchemy 2.0.45 (async ORM)
 - asyncpg 0.31.0 (PostgreSQL driver)
-- Pydantic 2.12.5 (validation)
-- Python 3.13.7
-- UV package manager
+- Pydantic 2.7.4 + pydantic-settings 2.3.0 (pinned for compatibility)
+- Python 3.11 (single version in CI)
+- Pip workflows (no pandas; lean deps)
 
 **Database:**
 - PostgreSQL 15-alpine
+- Schema: `ctsr` with seeded lookup tables (system categories, validation statuses, criticality)
 - 11 tables with audit triggers
-- Schema: `ctsr`
-- Seed data loaded
 
 **Authentication:**
 - Azure AD JWT support (disabled for local dev)
 - Role-based access: VIEWER, TRIAL_LEAD, ADMIN
 - Local dev bypass mode active
 
+**CI/CD & Testing:**
+- GitHub Actions pipelines green (backend, frontend, integration)
+- Integration workflow seeds lookup tables and uses DATABASE_URL/TEST_DATABASE_URL
+- Pre-commit: black, isort, flake8; Python 3.11 only
+
 ### 🚧 TODO: Next Implementation Phases
 
-1. **Streamlit UI** (Priority 1)
-2. **Testing Infrastructure** (Priority 2)
-3. **Azure Functions** (Priority 3)
+1. **Optional**: Production deployment hardening (monitoring, TLS, secrets management)
+2. **Optional**: Add Excel export (if reintroducing lightweight dependency) — currently CSV/JSON only
+3. **Optional**: Azure Functions integration (if needed by roadmap)
 
 ---
 

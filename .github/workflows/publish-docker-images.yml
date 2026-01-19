@@ -1,0 +1,96 @@
+name: Publish Docker Images
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  workflow_run:
+    workflows: [Integration Tests]
+    types: [completed]
+    branches: [main]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME_API: ghcr.io/hlyl/ctss-api
+  IMAGE_NAME_STREAMLIT: ghcr.io/hlyl/ctss-streamlit
+
+jobs:
+  publish:
+    # Only run if integration tests passed or if manually triggered
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for versioning
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate version tag
+        id: version
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            # Tag push: use the tag as version
+            VERSION="${{ github.ref_name }}"
+          else
+            # Branch push: use commit SHA (short) as version
+            VERSION="main-${{ github.sha }}"
+            SHORT_SHA="${{ github.sha }}"
+            VERSION="${VERSION:0:14}"  # main-<short-sha>
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION"
+
+      - name: Build and push API image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./ctsr-api
+          file: ./ctsr-api/Dockerfile
+          push: true
+          tags: |
+            ${{ env.IMAGE_NAME_API }}:${{ steps.version.outputs.version }}
+            ${{ env.IMAGE_NAME_API }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push Streamlit image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./streamlit-app
+          file: ./streamlit-app/Dockerfile
+          push: true
+          tags: |
+            ${{ env.IMAGE_NAME_STREAMLIT }}:${{ steps.version.outputs.version }}
+            ${{ env.IMAGE_NAME_STREAMLIT }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Create deployment summary
+        run: |
+          cat >> $GITHUB_STEP_SUMMARY << EOF
+          ## 🐳 Docker Images Published
+
+          **Commit:** ${{ github.sha }}
+          **Version:** ${{ steps.version.outputs.version }}
+
+          ### Images:
+          - **API:** \`${{ env.IMAGE_NAME_API }}:${{ steps.version.outputs.version }}\`
+          - **Streamlit:** \`${{ env.IMAGE_NAME_STREAMLIT }}:${{ steps.version.outputs.version }}\`
+
+          Both images also tagged as \`latest\` for main branch.
+          EOF
