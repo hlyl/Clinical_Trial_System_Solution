@@ -137,6 +137,7 @@ jobs:
         POSTGRES_DB: ctsr_db
         POSTGRES_USER: ctsr_user
         POSTGRES_PASSWORD: ctsr_password
+        DATABASE_URL: postgresql+asyncpg://ctsr_user:ctsr_password@localhost:5432/ctsr_db
 
     - name: Install frontend dependencies
       run: |

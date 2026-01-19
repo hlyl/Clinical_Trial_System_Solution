@@ -76,7 +76,7 @@ class Settings(BaseSettings):
 @lru_cache
 def get_settings() -> Settings:
     """Get cached settings instance."""
-    # Clear cache in test environment to pick up TEST_DATABASE_URL
-    if os.getenv("TEST_DATABASE_URL"):
+    # Clear cache if using explicit DATABASE_URL or TEST_DATABASE_URL
+    if os.getenv("DATABASE_URL") or os.getenv("TEST_DATABASE_URL"):
         get_settings.cache_clear()
     return Settings()
